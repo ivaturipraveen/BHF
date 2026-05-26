@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 
 export interface RsvpFormProps {
   eventSlug: string;
@@ -179,7 +180,14 @@ export function RsvpForm({
         size="lg"
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Submitting…" : "RSVP"}
+        {status === "submitting" ? (
+          <>
+            <Spinner size={18} />
+            Submitting…
+          </>
+        ) : (
+          "RSVP"
+        )}
       </Button>
     </form>
   );

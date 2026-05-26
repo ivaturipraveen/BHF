@@ -32,6 +32,22 @@ export const metadata: Metadata = {
   title: "Bharatiya Heritage Foundation",
   description:
     "A thriving home for Bharatiya heritage in Solano County — building community, celebrating culture, and empowering the next generation through dharmic values.",
+  icons: {
+    icon: [
+      { url: "/brand/bhf-logo.jpg", type: "image/jpeg" },
+    ],
+    apple: [{ url: "/brand/bhf-logo.jpg" }],
+  },
+  openGraph: {
+    images: [
+      {
+        url: "/brand/bhf-logo.jpg",
+        width: 1600,
+        height: 1600,
+        alt: "Bharatiya Heritage Foundation",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

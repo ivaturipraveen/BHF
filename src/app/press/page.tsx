@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Markdown } from "@/components/ui/Markdown";
@@ -62,17 +63,42 @@ export default async function PressPage() {
           <h2 className="font-display text-2xl text-indigo mb-6">
             Logo downloads
           </h2>
-          <Card variant="default">
-            <p className="text-warm-gray">
-              Coming soon: PNG + SVG on light/dark backgrounds. Email{" "}
-              <a
-                href={`mailto:${siteConfig.email}`}
-                className="text-saffron underline hover:text-amber-burnt"
-              >
-                {siteConfig.email}
-              </a>{" "}
-              for press-ready assets in the meantime.
-            </p>
+          <Card variant="default" className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-shrink-0">
+              <Image
+                src="/brand/bhf-logo.jpg"
+                alt="Bharatiya Heritage Foundation logo"
+                width={200}
+                height={200}
+                className="rounded-full"
+              />
+            </div>
+            <div className="flex-1 flex flex-col gap-4">
+              <p className="text-warm-gray leading-relaxed">
+                The official BHF mark — a saffron ring with mountains, the
+                sacred Om, and an open book. Use on cream or white backgrounds
+                with generous whitespace. Do not recolor or alter the mark.
+              </p>
+              <div>
+                <a
+                  href="/brand/bhf-logo.jpg"
+                  download="bhf-logo.jpg"
+                  className="inline-flex items-center gap-2 rounded-full bg-saffron text-white font-semibold px-6 py-3 text-sm hover:bg-amber-burnt transition-colors shadow-[0_4px_12px_rgba(217,119,6,0.25)] focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron/40 focus-visible:ring-offset-2"
+                >
+                  Download PNG (1600×1600)
+                </a>
+              </div>
+              <p className="text-xs text-warm-gray">
+                Vector (SVG) version coming soon — contact{" "}
+                <a
+                  href="mailto:press@bhfcommunity.org"
+                  className="text-saffron underline underline-offset-4 decoration-saffron/40 hover:decoration-saffron"
+                >
+                  press@bhfcommunity.org
+                </a>{" "}
+                for high-res or licensing requests.
+              </p>
+            </div>
           </Card>
         </Container>
       </section>

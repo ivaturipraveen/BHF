@@ -5,6 +5,7 @@ import { getSessionFromCookies } from "@/lib/auth";
 import { listMyDonations } from "@/lib/queries/account";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { Donation } from "@/types/db";
 
 export const dynamic = "force-dynamic";
@@ -60,18 +61,11 @@ export default async function DonationsPage() {
       </header>
 
       {donations.length === 0 ? (
-        <Card>
-          <p className="text-warm-gray">
-            Your donation history will appear here once you donate. Visit{" "}
-            <Link
-              href="/donate"
-              className="text-saffron hover:text-amber-burnt font-medium"
-            >
-              /donate
-            </Link>{" "}
-            to make your first contribution.
-          </p>
-        </Card>
+        <EmptyState
+          title="No donations yet"
+          body="Your donation history will appear here once you give. Every contribution sustains BHF's cultural and educational programs."
+          cta={{ href: "/donate", label: "Make your first donation" }}
+        />
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full text-sm">

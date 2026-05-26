@@ -26,8 +26,8 @@ export function DesktopNavLinks({ links }: { links: readonly NavLink[] }) {
             aria-current={active ? "page" : undefined}
             className={
               active
-                ? "px-3 py-2 text-sm font-medium text-saffron transition-colors"
-                : "px-3 py-2 text-sm font-medium text-indigo hover:text-saffron transition-colors"
+                ? "px-3 py-2 text-sm font-medium text-saffron border-b border-saffron/40 transition-colors"
+                : "px-3 py-2 text-sm font-medium text-indigo border-b border-transparent hover:text-saffron transition-colors"
             }
           >
             {link.label}

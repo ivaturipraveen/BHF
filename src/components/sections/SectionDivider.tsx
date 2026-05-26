@@ -1,47 +1,63 @@
-export function SectionDivider() {
+type DividerVariant = "default" | "footer";
+
+interface SectionDividerProps {
+  variant?: DividerVariant;
+}
+
+/**
+ * Madhubani / temple-line-work inspired divider.
+ * Pure flat 2-color (saffron + indigo); no fills with gradients.
+ */
+export function SectionDivider({ variant = "default" }: SectionDividerProps) {
+  const wrapperClass =
+    variant === "footer"
+      ? "flex justify-center pb-8 bg-indigo"
+      : "flex justify-center py-8 bg-white";
+  const lineColor = variant === "footer" ? "text-cream" : "text-indigo";
+  const accentColor = "text-saffron";
+
   return (
-    <div aria-hidden="true" className="flex justify-center py-8 bg-white">
+    <div role="presentation" aria-hidden="true" className={wrapperClass}>
       <svg
-        width="600"
+        width="640"
         height="24"
-        viewBox="0 0 600 24"
+        viewBox="0 0 640 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="max-w-[80%] text-saffron"
+        className="max-w-[80%]"
       >
-        <line
-          x1="0"
-          y1="12"
-          x2="250"
-          y2="12"
-          stroke="currentColor"
-          strokeOpacity="0.25"
-          strokeWidth="1"
-        />
-        <line
-          x1="350"
-          y1="12"
-          x2="600"
-          y2="12"
-          stroke="currentColor"
-          strokeOpacity="0.25"
-          strokeWidth="1"
-        />
-        <g transform="translate(300 12)" className="text-indigo">
-          <circle
-            r="6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeOpacity="0.5"
-          />
-          <circle r="2" fill="currentColor" fillOpacity="0.7" />
+        {/* outer lines extending outward */}
+        <g className={lineColor} stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.4">
+          <line x1="10" y1="12" x2="240" y2="12" />
+          <line x1="400" y1="12" x2="630" y2="12" />
+          {/* outer small dots */}
+          <circle cx="40" cy="12" r="1.2" fill="currentColor" fillOpacity="0.6" stroke="none" />
+          <circle cx="80" cy="12" r="1.2" fill="currentColor" fillOpacity="0.6" stroke="none" />
+          <circle cx="560" cy="12" r="1.2" fill="currentColor" fillOpacity="0.6" stroke="none" />
+          <circle cx="600" cy="12" r="1.2" fill="currentColor" fillOpacity="0.6" stroke="none" />
         </g>
-        <g transform="translate(270 12)">
-          <circle r="1.5" fill="currentColor" fillOpacity="0.4" />
+
+        {/* center diamond / lotus-bud motif in saffron */}
+        <g className={accentColor} stroke="currentColor" strokeWidth="1.5" fill="none">
+          {/* diamond */}
+          <path d="M320 2 L336 12 L320 22 L304 12 Z" />
+          {/* inner small diamond */}
+          <path d="M320 7 L327 12 L320 17 L313 12 Z" />
         </g>
-        <g transform="translate(330 12)">
-          <circle r="1.5" fill="currentColor" fillOpacity="0.4" />
+
+        {/* symmetric line segments fanning out from center */}
+        <g className={lineColor} stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.55">
+          <line x1="260" y1="12" x2="296" y2="12" />
+          <line x1="344" y1="12" x2="380" y2="12" />
+          {/* tick accents */}
+          <line x1="262" y1="8" x2="262" y2="16" />
+          <line x1="378" y1="8" x2="378" y2="16" />
+        </g>
+
+        {/* center dot accents */}
+        <g className={accentColor}>
+          <circle cx="280" cy="12" r="1.5" fill="currentColor" />
+          <circle cx="360" cy="12" r="1.5" fill="currentColor" />
         </g>
       </svg>
     </div>

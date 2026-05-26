@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { ButtonLink } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { listAnnualReports } from "@/lib/queries/annualReports";
 
 export const revalidate = 60;
@@ -48,35 +49,11 @@ export default async function AnnualReportsPage() {
         <Container>
           {reports.length === 0 ? (
             <div className="max-w-2xl">
-              <Card variant="default" className="bg-cream border-saffron/30">
-                <h2 className="font-display text-xl text-indigo mb-3">
-                  Our first annual report is coming Spring 2027.
-                </h2>
-                <p className="text-warm-gray leading-relaxed">
-                  Until then, learn about our impact across the site — visit our{" "}
-                  <a
-                    href="/programs"
-                    className="text-saffron underline hover:text-amber-burnt"
-                  >
-                    programs
-                  </a>
-                  ,{" "}
-                  <a
-                    href="/events"
-                    className="text-saffron underline hover:text-amber-burnt"
-                  >
-                    events
-                  </a>
-                  , and{" "}
-                  <a
-                    href="/gallery"
-                    className="text-saffron underline hover:text-amber-burnt"
-                  >
-                    gallery
-                  </a>{" "}
-                  to see what we&apos;ve been building.
-                </p>
-              </Card>
+              <EmptyState
+                title="Our first annual report is coming Spring 2027"
+                body="Until then, learn about our impact across the site — visit our programs, events, and gallery to see what we've been building."
+                cta={{ href: "/programs", label: "Explore programs" }}
+              />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

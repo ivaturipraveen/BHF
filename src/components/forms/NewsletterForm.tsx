@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 export interface NewsletterFormProps {
   source?: string;
@@ -92,7 +93,14 @@ export function NewsletterForm({
         disabled={status === "submitting"}
         className="sm:mb-0"
       >
-        {status === "submitting" ? "Subscribing…" : "Stay connected"}
+        {status === "submitting" ? (
+          <>
+            <Spinner size={16} />
+            Subscribing…
+          </>
+        ) : (
+          "Stay connected"
+        )}
       </Button>
     </form>
   );

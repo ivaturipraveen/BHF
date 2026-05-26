@@ -6,6 +6,7 @@ import { Select } from "@/components/ui/Select";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 
 type InterestKey = "festivals" | "youth_programs" | "seva" | "classes";
 
@@ -348,7 +349,14 @@ export function SignupForm() {
         size="lg"
         disabled={submitting}
       >
-        {submitting ? "Creating account…" : "Create account"}
+        {submitting ? (
+          <>
+            <Spinner size={18} />
+            Creating account…
+          </>
+        ) : (
+          "Create account"
+        )}
       </Button>
     </form>
   );

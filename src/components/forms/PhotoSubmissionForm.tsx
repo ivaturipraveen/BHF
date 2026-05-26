@@ -4,6 +4,7 @@ import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 export interface PhotoSubmissionFormProps {
   eventSlug?: string;
@@ -100,7 +101,14 @@ export function PhotoSubmissionForm({
         size="lg"
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Submitting…" : "Submit photo"}
+        {status === "submitting" ? (
+          <>
+            <Spinner size={18} />
+            Submitting…
+          </>
+        ) : (
+          "Submit photo"
+        )}
       </Button>
     </form>
   );

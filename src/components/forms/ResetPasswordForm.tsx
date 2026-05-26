@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 export interface ResetPasswordFormProps {
   email: string;
@@ -120,7 +121,14 @@ export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
         </p>
       ) : null}
       <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-        {submitting ? "Updating…" : "Update password"}
+        {submitting ? (
+          <>
+            <Spinner size={18} />
+            Updating…
+          </>
+        ) : (
+          "Update password"
+        )}
       </Button>
     </form>
   );

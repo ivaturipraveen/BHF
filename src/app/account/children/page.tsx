@@ -11,6 +11,7 @@ import type { YouthChild } from "@/types/db";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { FlashBanner } from "@/components/account/FlashBanner";
 import { DeleteChildButton } from "@/components/account/DeleteChildButton";
 
@@ -105,24 +106,11 @@ export default async function ChildrenPage({
       </div>
 
       {children.length === 0 ? (
-        <Card className="bg-cream border-saffron/30">
-          <h2 className="font-display text-xl text-indigo">
-            No children added yet
-          </h2>
-          <p className="mt-2 text-warm-gray">
-            You haven&apos;t added any children yet. Add one to enroll them in
-            our youth programs.
-          </p>
-          <div className="mt-4">
-            <ButtonLink
-              href="/account/children/new"
-              variant="primary"
-              size="md"
-            >
-              Add a child
-            </ButtonLink>
-          </div>
-        </Card>
+        <EmptyState
+          title="No children added yet"
+          body="You haven't added any children yet. Add one to enroll them in our youth programs."
+          cta={{ href: "/account/children/new", label: "Add a child" }}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {children.map((child: YouthChild) => {

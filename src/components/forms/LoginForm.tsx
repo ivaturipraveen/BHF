@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 export interface LoginFormProps {
   next: string;
@@ -121,7 +122,14 @@ export function LoginForm({ next }: LoginFormProps) {
         size="lg"
         disabled={submitting}
       >
-        {submitting ? "Signing in…" : "Sign in"}
+        {submitting ? (
+          <>
+            <Spinner size={18} />
+            Signing in…
+          </>
+        ) : (
+          "Sign in"
+        )}
       </Button>
     </form>
   );

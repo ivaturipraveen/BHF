@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/Card';
+import { EmptyStateIllustration } from '@/components/ui/EmptyState';
 
 interface Props<Row> {
   rows: Row[];
@@ -14,13 +15,14 @@ interface Props<Row> {
 export function AdminTable<Row>({ rows, columns, emptyMessage = 'No items yet.', rowKey }: Props<Row>) {
   if (rows.length === 0) {
     return (
-      <Card>
-        <p className="text-sm text-warm-gray">{emptyMessage}</p>
+      <Card className="flex flex-col items-center text-center gap-3 py-10">
+        <EmptyStateIllustration />
+        <p className="font-display text-lg text-indigo">{emptyMessage}</p>
       </Card>
     );
   }
   return (
-    <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl">
+    <div className="overflow-x-auto bg-white border border-gray-200 rounded-2xl">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>

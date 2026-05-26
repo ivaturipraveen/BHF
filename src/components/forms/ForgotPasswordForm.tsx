@@ -4,6 +4,7 @@ import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = React.useState("");
@@ -51,7 +52,14 @@ export function ForgotPasswordForm() {
         required
       />
       <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-        {submitting ? "Sending…" : "Send reset link"}
+        {submitting ? (
+          <>
+            <Spinner size={18} />
+            Sending…
+          </>
+        ) : (
+          "Send reset link"
+        )}
       </Button>
     </form>
   );

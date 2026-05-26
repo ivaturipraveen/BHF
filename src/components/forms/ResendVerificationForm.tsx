@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 export function ResendVerificationForm() {
   const [email, setEmail] = React.useState("");
@@ -47,7 +48,14 @@ export function ResendVerificationForm() {
         required
       />
       <Button type="submit" variant="primary" size="md" disabled={submitting}>
-        {submitting ? "Sending…" : "Resend verification email"}
+        {submitting ? (
+          <>
+            <Spinner size={16} />
+            Sending…
+          </>
+        ) : (
+          "Resend verification email"
+        )}
       </Button>
     </form>
   );

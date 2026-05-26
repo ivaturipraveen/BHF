@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 import { cn } from "@/lib/cn";
 
 type DonationTab = "monthly" | "yearly" | "one_time";
@@ -311,7 +312,14 @@ export function DonationForm({
           disabled={!canSubmit}
           className="w-full md:w-auto md:self-start min-h-[52px]"
         >
-          {submitting ? "Starting checkout…" : submitLabel}
+          {submitting ? (
+            <>
+              <Spinner size={18} />
+              Starting checkout…
+            </>
+          ) : (
+            submitLabel
+          )}
         </Button>
         <p className="text-xs text-warm-gray leading-relaxed max-w-3xl">
           For donating amounts greater than $1,000, it is recommended that you

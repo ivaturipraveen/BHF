@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { siteConfig, navLinks } from "@/data/content";
 import { Container } from "@/components/ui/Container";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
+import { SectionDivider } from "@/components/sections/SectionDivider";
 import { listPrograms } from "@/lib/queries/programs";
 
 const quickLinks = [
@@ -24,11 +26,23 @@ export default async function Footer() {
 
   return (
     <footer className="bg-indigo text-cream py-16">
+      <div className="bg-indigo">
+        <SectionDivider variant="footer" />
+      </div>
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <Link href="/" className="inline-block font-display text-xl text-white">
-              {siteConfig.shortName}
+            <Link href="/" className="inline-flex flex-col items-start gap-3">
+              <Image
+                src="/brand/bhf-logo.jpg"
+                alt="Bharatiya Heritage Foundation logo"
+                width={72}
+                height={72}
+                className="rounded-full"
+              />
+              <span className="font-display text-xl text-white">
+                {siteConfig.shortName}
+              </span>
             </Link>
             <p className="mt-4 text-sm text-cream/80 leading-relaxed">
               A thriving home for Bharatiya heritage in Solano County.

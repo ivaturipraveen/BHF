@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { navLinks, siteConfig } from "@/data/content";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
@@ -14,12 +15,24 @@ export default function Navbar() {
       className="sticky top-0 z-40 backdrop-blur bg-white/95 border-b border-gray-200"
     >
       <Container>
-        <div className="relative flex h-20 items-center justify-between">
-          <Link
-            href="/"
-            className="font-display text-xl text-indigo hover:text-saffron transition-colors"
-          >
-            BHF • Bharatiya Heritage Foundation
+        <div className="relative flex h-24 items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/brand/bhf-logo.jpg"
+              alt="Bharatiya Heritage Foundation logo"
+              width={44}
+              height={44}
+              priority
+              className="rounded-full"
+            />
+            <span className="hidden sm:flex flex-col leading-tight">
+              <span className="font-display text-base text-indigo font-semibold">
+                Bharatiya Heritage
+              </span>
+              <span className="text-xs text-warm-gray uppercase tracking-wider">
+                Foundation
+              </span>
+            </span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">

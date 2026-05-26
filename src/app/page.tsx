@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        url: "/brand/bhf-logo.jpg",
+        width: 1600,
+        height: 1600,
         alt: "Bharatiya Heritage Foundation",
       },
     ],
@@ -46,11 +46,15 @@ export default function HomePage() {
         <ImpactStats />
         <SectionDivider />
         <UpcomingEvents />
+        <SectionDivider />
         <ProgramsPreview />
         <SectionDivider />
         <GalleryPreview />
+        <SectionDivider />
         <MissionValues />
+        <SectionDivider />
         <DonateCTA />
+        <SectionDivider />
         <NewsletterSignup />
         <SponsorGrid />
       </main>

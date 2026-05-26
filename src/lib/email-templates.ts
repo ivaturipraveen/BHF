@@ -10,6 +10,12 @@ export interface EmailTemplate {
 const INDIGO = '#1E3A5F';
 const SAFFRON = '#D97706';
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL.length > 0
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : 'http://localhost:3000';
+const LOGO_URL = `${SITE_URL}/brand/bhf-logo.jpg`;
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -32,7 +38,16 @@ function shell(headline: string, bodyHtml: string): string {
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="background:#ffffff;border-radius:6px;overflow:hidden;max-width:600px;">
         <tr>
           <td style="background:${INDIGO};color:#ffffff;padding:20px 28px;font-size:18px;font-weight:bold;">
-            BHF &mdash; ${escapeHtml(LEGAL_NAME)}
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding-right:16px;vertical-align:middle;">
+                  <img src="${LOGO_URL}" alt="Bharatiya Heritage Foundation logo" width="64" height="64" style="display:block;border-radius:50%;border:0;" />
+                </td>
+                <td style="vertical-align:middle;color:#ffffff;font-size:18px;font-weight:bold;">
+                  ${escapeHtml(LEGAL_NAME)}
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramCard } from "@/components/cards/ProgramCard";
 import { listFeaturedPrograms } from "@/lib/queries/programs";
 
@@ -10,9 +11,10 @@ export async function ProgramsPreview() {
     <Section className="bg-cream/40">
       <Container>
         <div className="flex items-end justify-between gap-4 mb-10">
-          <h2 className="font-display text-3xl md:text-4xl text-indigo max-w-2xl">
-            Programs that build character and community
-          </h2>
+          <SectionHeading
+            eyebrow="Grow"
+            title="Programs that build character and community"
+          />
           <Link
             href="/programs"
             className="text-saffron font-medium hover:text-amber-burnt whitespace-nowrap"

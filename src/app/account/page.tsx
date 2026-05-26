@@ -17,6 +17,7 @@ import {
 import { listExclusiveContent } from "@/lib/queries/exclusiveContent";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -127,17 +128,11 @@ export default async function AccountDashboardPage() {
           </Link>
         </div>
         {upcoming.length === 0 ? (
-          <Card>
-            <p className="text-warm-gray">
-              No upcoming RSVPs yet —{" "}
-              <Link
-                href="/events"
-                className="text-saffron hover:text-amber-burnt font-medium"
-              >
-                browse events →
-              </Link>
-            </p>
-          </Card>
+          <EmptyState
+            title="No upcoming RSVPs yet"
+            body="When you RSVP to an event, it'll show up here so you can keep track."
+            cta={{ href: "/events", label: "Browse events" }}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {upcoming.map((r) => (

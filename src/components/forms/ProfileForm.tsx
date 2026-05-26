@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 type InterestKey = "festivals" | "youth_programs" | "seva" | "classes";
 
@@ -197,7 +198,14 @@ export function ProfileForm({ initialMember }: ProfileFormProps) {
       ) : null}
 
       <Button type="submit" variant="primary" size="lg" disabled={submitting}>
-        {submitting ? "Saving…" : "Save changes"}
+        {submitting ? (
+          <>
+            <Spinner size={18} />
+            Saving…
+          </>
+        ) : (
+          "Save changes"
+        )}
       </Button>
     </form>
   );

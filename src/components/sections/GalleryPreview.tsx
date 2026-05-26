@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { listRecentPhotos } from "@/lib/queries/gallery";
 
 export async function GalleryPreview() {
@@ -10,9 +11,7 @@ export async function GalleryPreview() {
     <Section className="bg-white">
       <Container>
         <div className="flex items-end justify-between gap-4 mb-10">
-          <h2 className="font-display text-3xl md:text-4xl text-indigo">
-            Moments from our community
-          </h2>
+          <SectionHeading eyebrow="Celebrate" title="Moments from our community" />
           <Link
             href="/gallery"
             className="text-saffron font-medium hover:text-amber-burnt whitespace-nowrap"

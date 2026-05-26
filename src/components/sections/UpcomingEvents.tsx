@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { EventCard } from "@/components/cards/EventCard";
 import { ProgramCard } from "@/components/cards/ProgramCard";
 import { listUpcomingEvents, countRsvps } from "@/lib/queries/events";
@@ -16,9 +17,7 @@ export async function UpcomingEvents() {
     <Section className="bg-white">
       <Container>
         <div className="flex items-end justify-between gap-4 mb-10">
-          <h2 className="font-display text-3xl md:text-4xl text-indigo">
-            Upcoming events
-          </h2>
+          <SectionHeading eyebrow="Gather" title="Upcoming events" />
           <Link
             href="/events"
             className="text-saffron font-medium hover:text-amber-burnt whitespace-nowrap"

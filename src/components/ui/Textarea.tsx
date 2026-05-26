@@ -39,8 +39,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           required={required}
           disabled={disabled}
           className={cn(
-            "min-h-[88px] w-full rounded-md border bg-white px-4 py-3 text-base text-indigo placeholder:text-warm-gray/60 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-saffron disabled:opacity-50",
-            error ? "border-red-500" : "border-gray-300",
+            "min-h-[88px] w-full rounded-xl border-2 bg-white px-4 py-3 text-base text-indigo placeholder:text-warm-gray/60 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-saffron/20 focus:border-saffron disabled:opacity-60 disabled:cursor-not-allowed",
+            error ? "border-red-500 bg-red-50/30" : "border-gray-200",
             className,
           )}
           {...rest}
@@ -51,7 +51,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           </p>
         ) : null}
         {error ? (
-          <p id={errorId} role="alert" className="text-xs text-red-600">
+          <p id={errorId} role="alert" className="text-xs text-red-700">
             {error}
           </p>
         ) : null}

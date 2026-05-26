@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { EventCard } from "@/components/cards/EventCard";
+import { EmptyState } from "@/components/ui/EmptyState";
 import {
   listUpcomingEvents,
   listPastEvents,
@@ -154,9 +155,11 @@ export default async function EventsPage({
           </div>
 
           {events.length === 0 ? (
-            <p className="text-warm-gray">
-              No events match this filter. Check back soon.
-            </p>
+            <EmptyState
+              title="No events match this filter"
+              body="Try a different filter or check back soon — we're always adding new festivals, classes, and gatherings."
+              cta={{ href: "/events", label: "View all events" }}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((e, i) => (

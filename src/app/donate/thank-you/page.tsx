@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { timingSafeEqual } from "crypto";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -122,6 +123,15 @@ export default async function DonateThankYouPage({
       <section className="bg-gradient-to-br from-saffron/15 via-cream to-indigo/10 py-16 md:py-20">
         <Container>
           <div className="max-w-3xl mx-auto text-center">
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/brand/bhf-logo.jpg"
+                alt="Bharatiya Heritage Foundation logo"
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
+            </div>
             <p className="text-saffron uppercase tracking-widest text-sm font-semibold mb-3">
               Donation received
             </p>

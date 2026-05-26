@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 type ContactType =
   | "volunteer"
@@ -142,7 +143,14 @@ export function ContactForm({
         size="lg"
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Sending…" : "Send message"}
+        {status === "submitting" ? (
+          <>
+            <Spinner size={18} />
+            Sending…
+          </>
+        ) : (
+          "Send message"
+        )}
       </Button>
     </form>
   );

@@ -57,8 +57,9 @@ const PH: {
   youth: u('photo-1529390079861-591de354faf5'),
   // Rangoli / broken Unsplash ID, fall back to brand placeholder
   rangoli: null,
-  // Vedic chanting / spiritual gathering
-  vedic: u('photo-1572804013427-4d7ca7268217'),
+  // Vedic chanting / off-context stock removed (was a fashion-model in red);
+  // PhotoFallback will render until real BHF photos are uploaded.
+  vedic: null,
   // Hero — broken Unsplash ID, fall back to brand placeholder
   hero: null,
   // Generic community / gathering / family

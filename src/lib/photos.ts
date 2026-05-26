@@ -21,10 +21,8 @@ export const PHOTOS = {
   // Hero — empty string triggers the brand fallback (no full-bleed photo).
   HERO: "",
 
-  // Diwali — diyas, oil lamps, festival of lights
-  DIWALI: [
-    u("photo-1572804013427-4d7ca7268217", 1600),
-  ],
+  // Diwali — off-context stock removed; awaiting real BHF Diwali photography.
+  DIWALI: [] as string[],
 
   // Holi — colors, joy, spring
   HOLI: [] as string[],

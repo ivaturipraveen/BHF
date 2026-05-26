@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 
 const isProd = process.env.NODE_ENV === 'production';
+// HSTS + upgrade-insecure-requests are HTTPS-only directives. Gate them on an
+// explicit env flag so sandbox/staging hosts served over plain HTTP don't tell
+// browsers to force HTTPS for a port that has no TLS termination.
+const httpsEnabled = process.env.HTTPS_ENABLED === '1';
 
 function sentryConnectOrigin() {
   const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN;
@@ -56,7 +60,7 @@ function buildCsp() {
     `connect-src ${connectSrc}`,
     `base-uri 'self'`,
     `form-action 'self' https://checkout.stripe.com`,
-    ...(isProd ? ['upgrade-insecure-requests'] : []),
+    ...(httpsEnabled ? ['upgrade-insecure-requests'] : []),
   ];
 
   return directives.join('; ');
@@ -71,7 +75,7 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
   },
   { key: 'Content-Security-Policy', value: buildCsp() },
-  ...(isProd
+  ...(httpsEnabled
     ? [
         {
           key: 'Strict-Transport-Security',

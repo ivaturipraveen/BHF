@@ -46,9 +46,11 @@ export default function HeroBackground() {
       height={1080}
       onError={() => setFailed(true)}
       className="absolute inset-0 w-full h-full object-cover"
-      style={{ filter: "brightness(0.55) saturate(1.1)" }}
+      style={{ filter: "brightness(0.78) saturate(1.05)" }}
     >
-      <source src="/brand/hero.webm" type="video/webm" />
+      {/* Only MP4 — adding a non-existent .webm source can cause some
+          browsers to trigger video error early. Add a webm <source>
+          back ABOVE this mp4 line if a hero.webm is ever shipped. */}
       <source src="/brand/hero.mp4" type="video/mp4" />
     </video>
   );

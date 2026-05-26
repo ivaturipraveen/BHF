@@ -28,8 +28,9 @@ export default function Hero() {
       {hasVideo ? (
         <div className="absolute inset-0 -z-10">
           <HeroBackground />
-          {/* Solid indigo overlay for legibility (no gradient) */}
-          <div className="absolute inset-0 bg-indigo/60" aria-hidden="true" />
+          {/* Lighter indigo overlay for legibility — video already
+              uses brand colors, so we don't need a heavy darkening layer. */}
+          <div className="absolute inset-0 bg-indigo/30" aria-hidden="true" />
         </div>
       ) : hasPhoto ? (
         <div className="absolute inset-0 -z-10">

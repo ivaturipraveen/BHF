@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { headers } from "next/headers";
 import Navbar from "@/components/Navbar";
@@ -27,6 +27,12 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL.length > 0
     ? process.env.NEXT_PUBLIC_SITE_URL
     : "http://localhost:3000";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#D97706",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

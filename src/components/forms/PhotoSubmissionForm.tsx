@@ -75,6 +75,7 @@ export function PhotoSubmissionForm({
       <Input
         label="Email"
         type="email"
+        inputMode="email"
         value={submitterEmail}
         onChange={(e) => setSubmitterEmail(e.target.value)}
         required

@@ -139,6 +139,7 @@ export function RsvpForm({
         label="Email"
         type="email"
         name="email"
+        inputMode="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -148,6 +149,7 @@ export function RsvpForm({
         label="Party size"
         type="number"
         name="partySize"
+        inputMode="numeric"
         min={1}
         max={10}
         value={partySize}

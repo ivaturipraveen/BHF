@@ -108,6 +108,7 @@ export function NewsletterForm({
             label="Email"
             type="email"
             name="email"
+            inputMode="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);

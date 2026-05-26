@@ -110,8 +110,8 @@ export default function Hero() {
         <h1
           className={
             darkOverlay
-              ? "mt-4 font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-cream leading-[1.05] tracking-tight max-w-4xl mx-auto"
-              : "mt-4 font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-indigo leading-[1.05] tracking-tight max-w-4xl mx-auto"
+              ? "mt-4 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-cream leading-[1.05] tracking-tight max-w-4xl mx-auto"
+              : "mt-4 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-indigo leading-[1.05] tracking-tight max-w-4xl mx-auto"
           }
         >
           A thriving home for Bharatiya heritage in Solano County

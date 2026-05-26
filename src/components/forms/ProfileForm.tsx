@@ -125,11 +125,14 @@ export function ProfileForm({ initialMember }: ProfileFormProps) {
       <Input
         label="Phone"
         type="tel"
+        inputMode="tel"
+        autoComplete="tel"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
       <Input
         label="City"
+        autoComplete="address-level2"
         value={city}
         onChange={(e) => setCity(e.target.value)}
       />

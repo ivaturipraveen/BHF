@@ -108,6 +108,7 @@ export function ContactForm({
       <Input
         label="Email"
         type="email"
+        inputMode="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -116,6 +117,7 @@ export function ContactForm({
       <Input
         label="Phone"
         type="tel"
+        inputMode="tel"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         autoComplete="tel"

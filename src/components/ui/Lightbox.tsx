@@ -26,6 +26,7 @@ export function Lightbox({
 }: LightboxProps) {
   const overlayRef = React.useRef<HTMLDivElement | null>(null);
   const closeRef = React.useRef<HTMLButtonElement | null>(null);
+  const touchStartRef = React.useRef<{ x: number; y: number } | null>(null);
 
   React.useEffect(() => {
     if (!open) return;
@@ -78,6 +79,23 @@ export function Lightbox({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
+      }}
+      onTouchStart={(e) => {
+        const t = e.touches[0];
+        touchStartRef.current = { x: t.clientX, y: t.clientY };
+      }}
+      onTouchEnd={(e) => {
+        const start = touchStartRef.current;
+        touchStartRef.current = null;
+        if (!start) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - start.x;
+        const dy = t.clientY - start.y;
+        // Horizontal swipe wins only if mostly horizontal and ≥50px.
+        if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          if (dx < 0 && onNext) onNext();
+          else if (dx > 0 && onPrev) onPrev();
+        }
       }}
     >
       <button

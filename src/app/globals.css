@@ -116,9 +116,15 @@ a:focus-visible > .read-more-arrow,
   font-family: var(--font-display);
   color: var(--color-saffron);
   float: left;
-  font-size: 3.75rem;
+  font-size: 3rem;
   line-height: 0.9;
   padding-right: 0.5rem;
   padding-top: 0.25rem;
   font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .drop-cap > p:first-of-type::first-letter {
+    font-size: 3.75rem;
+  }
 }

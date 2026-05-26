@@ -272,6 +272,7 @@ export function DonationForm({
         <Input
           label="Email"
           type="email"
+          inputMode="email"
           value={donorEmail}
           onChange={(e) => setDonorEmail(e.target.value)}
           required

@@ -210,6 +210,7 @@ export function SignupForm() {
         label="Email"
         type="email"
         name="email"
+        inputMode="email"
         autoComplete="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -259,6 +260,7 @@ export function SignupForm() {
         label="Phone (optional)"
         type="tel"
         name="phone"
+        inputMode="tel"
         autoComplete="tel"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}

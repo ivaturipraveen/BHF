@@ -187,7 +187,7 @@ export default async function ProgramDetailPage({
           ) : null}
 
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
-            <div className="max-w-3xl">
+            <div className="max-w-3xl order-2 lg:order-1">
               {program.description_md ? (
                 <Markdown content={program.description_md} />
               ) : null}
@@ -222,7 +222,7 @@ export default async function ProgramDetailPage({
               ) : null}
             </div>
 
-            <aside className="lg:sticky lg:top-24 self-start space-y-6">
+            <aside className="order-1 lg:order-2 lg:sticky lg:top-24 self-start space-y-6">
               {/* Quick facts */}
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <h3 className="font-display text-lg text-indigo mb-4">

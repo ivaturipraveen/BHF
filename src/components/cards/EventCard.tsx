@@ -1,11 +1,11 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Calendar, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { PhotoFallback } from "@/components/ui/PhotoFallback";
+import { EventBookmarkButton } from "@/components/EventBookmarkButton";
 import { cn } from "@/lib/cn";
 import type { Event } from "@/types/db";
 
@@ -18,6 +18,8 @@ export interface EventCardRsvpInfo {
 export interface EventCardProps {
   event: Event;
   rsvpInfo?: EventCardRsvpInfo;
+  isMember?: boolean;
+  initialSavedId?: string | null;
   className?: string;
 }
 
@@ -27,7 +29,13 @@ function formatTimeRange(starts: Date, ends: Date | null): string {
   return `${startStr} – ${format(ends, "h:mm a")}`;
 }
 
-export function EventCard({ event, rsvpInfo, className }: EventCardProps) {
+export function EventCard({
+  event,
+  rsvpInfo,
+  isMember = false,
+  initialSavedId = null,
+  className,
+}: EventCardProps) {
   const startsAt = new Date(event.starts_at);
   const endsAt = event.ends_at ? new Date(event.ends_at) : null;
   const monthAbbrev = format(startsAt, "MMM").toUpperCase();
@@ -69,6 +77,12 @@ export function EventCard({ event, rsvpInfo, className }: EventCardProps) {
             {day}
           </span>
         </div>
+        <EventBookmarkButton
+          eventSlug={event.slug}
+          isMember={isMember}
+          initialSavedId={initialSavedId}
+          className="absolute top-3 right-3"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-6">

@@ -9,6 +9,40 @@ import type {
 } from '@/types/db';
 import { getMemberById, type PublicMember } from '@/lib/queries/members';
 
+export interface MemberPreferences {
+  newsletter: boolean;
+  directory: boolean;
+  eventReminders: boolean;
+  donationReceipts: boolean;
+  memberMessages: boolean;
+}
+
+export interface MemberPreferencesPatch {
+  newsletter?: boolean;
+  directory?: boolean;
+  eventReminders?: boolean;
+  donationReceipts?: boolean;
+  memberMessages?: boolean;
+}
+
+export interface ActivityItem {
+  type: 'rsvp' | 'donation' | 'child_added' | 'enrollment';
+  text: string;
+  date: Date;
+  link?: string;
+}
+
+export interface SavedEventRow {
+  id: string;
+  event_id: string;
+  event_slug: string;
+  event_title: string;
+  event_starts_at: Date;
+  event_hero_image_url: string | null;
+  note: string | null;
+  created_at: Date;
+}
+
 export async function listMyDonations(memberId: string): Promise<Donation[]> {
   return query<Donation>(
     `SELECT id, member_id, stripe_session_id, stripe_payment_intent_id,
@@ -414,30 +448,311 @@ export async function listMyPhotoSubmissions(
 export interface DataExport {
   generatedAt: string;
   member: PublicMember | null;
+  preferences: MemberPreferences | null;
   donations: Donation[];
   rsvps: MyRsvp[];
   youthChildren: YouthChild[];
   youthEnrollments: YouthEnrollment[];
   photoSubmissions: PhotoSubmission[];
+  savedEvents: SavedEventRow[];
 }
 
 export async function exportMyData(memberId: string): Promise<DataExport> {
   const member = await getMemberById(memberId);
-  const [donations, rsvps, youthChildren, youthEnrollments, photoSubmissions] =
-    await Promise.all([
-      listMyDonations(memberId),
-      listMyRsvps(memberId),
-      listMyChildren(memberId),
-      listMyEnrollments(memberId),
-      member ? listMyPhotoSubmissions(member.email) : Promise.resolve([]),
-    ]);
-  return {
-    generatedAt: new Date().toISOString(),
-    member,
+  const [
     donations,
     rsvps,
     youthChildren,
     youthEnrollments,
     photoSubmissions,
+    preferences,
+    savedEvents,
+  ] = await Promise.all([
+    listMyDonations(memberId),
+    listMyRsvps(memberId),
+    listMyChildren(memberId),
+    listMyEnrollments(memberId),
+    member ? listMyPhotoSubmissions(member.email) : Promise.resolve([]),
+    getMemberPreferences(memberId),
+    listSavedEvents(memberId, false),
+  ]);
+  return {
+    generatedAt: new Date().toISOString(),
+    member,
+    preferences,
+    donations,
+    rsvps,
+    youthChildren,
+    youthEnrollments,
+    photoSubmissions,
+    savedEvents,
   };
+}
+
+export async function cancelRsvp(
+  memberId: string,
+  rsvpId: string,
+): Promise<{ ok: true } | { ok: false; code: 'not_found' | 'past_event' }> {
+  return withTransaction(async (client) => {
+    const rsvpRows = await client.query<{ id: string; starts_at: Date }>(
+      `SELECT r.id, e.starts_at
+         FROM rsvps r
+         JOIN events e ON e.id = r.event_id
+        WHERE r.id = $1 AND r.member_id = $2
+        LIMIT 1`,
+      [rsvpId, memberId],
+    );
+    const row = rsvpRows.rows[0];
+    if (!row) return { ok: false, code: 'not_found' as const };
+    if (new Date(row.starts_at).getTime() < Date.now()) {
+      return { ok: false, code: 'past_event' as const };
+    }
+    await client.query(`DELETE FROM rsvps WHERE id = $1`, [rsvpId]);
+    return { ok: true as const };
+  });
+}
+
+export async function changeMemberPassword(
+  memberId: string,
+  newHash: string,
+): Promise<void> {
+  await query(
+    `UPDATE members SET password_hash = $1, updated_at = now() WHERE id = $2`,
+    [newHash, memberId],
+  );
+}
+
+export async function updateMemberPhoto(
+  memberId: string,
+  photoUrl: string,
+): Promise<void> {
+  await query(
+    `UPDATE members SET photo_url = $1, updated_at = now() WHERE id = $2`,
+    [photoUrl, memberId],
+  );
+}
+
+export async function getMemberPreferences(
+  memberId: string,
+): Promise<MemberPreferences | null> {
+  const rows = await query<{
+    newsletter_opt_in: boolean;
+    directory_opt_in: boolean;
+    event_reminders_opt_in: boolean;
+    donation_receipts_opt_in: boolean;
+    member_messages_opt_in: boolean;
+  }>(
+    `SELECT newsletter_opt_in, directory_opt_in, event_reminders_opt_in,
+            donation_receipts_opt_in, member_messages_opt_in
+       FROM members WHERE id = $1 LIMIT 1`,
+    [memberId],
+  );
+  const r = rows[0];
+  if (!r) return null;
+  return {
+    newsletter: r.newsletter_opt_in,
+    directory: r.directory_opt_in,
+    eventReminders: r.event_reminders_opt_in,
+    donationReceipts: r.donation_receipts_opt_in,
+    memberMessages: r.member_messages_opt_in,
+  };
+}
+
+const PREFERENCE_COLUMN_MAP: Record<keyof MemberPreferencesPatch, string> = {
+  newsletter: 'newsletter_opt_in',
+  directory: 'directory_opt_in',
+  eventReminders: 'event_reminders_opt_in',
+  donationReceipts: 'donation_receipts_opt_in',
+  memberMessages: 'member_messages_opt_in',
+};
+
+export async function updateMemberPreferences(
+  memberId: string,
+  patch: MemberPreferencesPatch,
+): Promise<MemberPreferences | null> {
+  const sets: string[] = [];
+  const params: unknown[] = [];
+  let i = 1;
+  for (const key of Object.keys(PREFERENCE_COLUMN_MAP) as (keyof MemberPreferencesPatch)[]) {
+    const val = patch[key];
+    if (val === undefined) continue;
+    const column = PREFERENCE_COLUMN_MAP[key];
+    sets.push(`${column} = $${i++}`);
+    params.push(val);
+  }
+  if (sets.length === 0) {
+    return getMemberPreferences(memberId);
+  }
+  params.push(memberId);
+  await query(
+    `UPDATE members SET ${sets.join(', ')}, updated_at = now() WHERE id = $${i}`,
+    params,
+  );
+  return getMemberPreferences(memberId);
+}
+
+export async function getActivityFeed(
+  memberId: string,
+  limit = 20,
+): Promise<ActivityItem[]> {
+  const safeLimit = Math.min(100, Math.max(1, Math.floor(limit)));
+  const fetchN = safeLimit;
+
+  const [rsvps, donations, children, enrollments] = await Promise.all([
+    query<{
+      created_at: Date;
+      event_title: string;
+      event_slug: string;
+    }>(
+      `SELECT r.created_at, e.title AS event_title, e.slug AS event_slug
+         FROM rsvps r
+         JOIN events e ON e.id = r.event_id
+        WHERE r.member_id = $1
+        ORDER BY r.created_at DESC
+        LIMIT $2`,
+      [memberId, fetchN],
+    ),
+    query<{
+      created_at: Date;
+      amount_cents: number;
+      currency: string;
+    }>(
+      `SELECT created_at, amount_cents, currency
+         FROM donations
+        WHERE member_id = $1 AND status = 'succeeded'
+        ORDER BY created_at DESC
+        LIMIT $2`,
+      [memberId, fetchN],
+    ),
+    query<{
+      created_at: Date;
+      first_name: string;
+      last_name: string;
+    }>(
+      `SELECT created_at, first_name, last_name
+         FROM youth_children
+        WHERE parent_member_id = $1
+        ORDER BY created_at DESC
+        LIMIT $2`,
+      [memberId, fetchN],
+    ),
+    query<{
+      parental_consent_at: Date;
+      child_first_name: string;
+      child_last_name: string;
+      program_title: string;
+      program_slug: string;
+    }>(
+      `SELECT en.parental_consent_at,
+              c.first_name AS child_first_name,
+              c.last_name AS child_last_name,
+              p.title AS program_title,
+              p.slug AS program_slug
+         FROM youth_enrollments en
+         JOIN youth_children c ON c.id = en.child_id
+         JOIN programs p ON p.id = en.program_id
+        WHERE c.parent_member_id = $1
+        ORDER BY en.parental_consent_at DESC
+        LIMIT $2`,
+      [memberId, fetchN],
+    ),
+  ]);
+
+  const items: ActivityItem[] = [];
+
+  for (const r of rsvps) {
+    items.push({
+      type: 'rsvp',
+      text: `RSVP'd for ${r.event_title}`,
+      date: r.created_at,
+      link: `/events/${r.event_slug}`,
+    });
+  }
+  for (const d of donations) {
+    const dollars = (d.amount_cents / 100).toFixed(2);
+    items.push({
+      type: 'donation',
+      text: `Donated $${dollars}`,
+      date: d.created_at,
+    });
+  }
+  for (const c of children) {
+    items.push({
+      type: 'child_added',
+      text: `Added ${c.first_name} ${c.last_name}`,
+      date: c.created_at,
+    });
+  }
+  for (const en of enrollments) {
+    items.push({
+      type: 'enrollment',
+      text: `Enrolled ${en.child_first_name} ${en.child_last_name} in ${en.program_title}`,
+      date: en.parental_consent_at,
+      link: `/programs/${en.program_slug}`,
+    });
+  }
+
+  items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return items.slice(0, safeLimit);
+}
+
+export async function saveEvent(
+  memberId: string,
+  eventId: string,
+): Promise<{ saved: boolean; id: string }> {
+  const rows = await query<{ id: string }>(
+    `INSERT INTO saved_events (member_id, event_id)
+       VALUES ($1, $2)
+       ON CONFLICT (member_id, event_id) DO NOTHING
+       RETURNING id`,
+    [memberId, eventId],
+  );
+  if (rows.length > 0) {
+    return { saved: true, id: rows[0].id };
+  }
+  // Already saved — fetch the existing row id so the client can reference it.
+  const existing = await query<{ id: string }>(
+    `SELECT id FROM saved_events WHERE member_id = $1 AND event_id = $2 LIMIT 1`,
+    [memberId, eventId],
+  );
+  return { saved: false, id: existing[0]?.id ?? '' };
+}
+
+export async function unsaveEvent(
+  memberId: string,
+  savedEventId: string,
+): Promise<boolean> {
+  const rows = await query<{ id: string }>(
+    `DELETE FROM saved_events
+       WHERE id = $1 AND member_id = $2
+       RETURNING id`,
+    [savedEventId, memberId],
+  );
+  return rows.length > 0;
+}
+
+export async function listSavedEvents(
+  memberId: string,
+  upcomingOnly: boolean,
+): Promise<SavedEventRow[]> {
+  const whereExtra = upcomingOnly ? `AND e.starts_at >= now()` : '';
+  return query<SavedEventRow>(
+    `SELECT s.id, s.event_id, e.slug AS event_slug, e.title AS event_title,
+            e.starts_at AS event_starts_at,
+            e.hero_image_url AS event_hero_image_url,
+            s.note, s.created_at
+       FROM saved_events s
+       JOIN events e ON e.id = s.event_id
+      WHERE s.member_id = $1 ${whereExtra}
+      ORDER BY e.starts_at ASC`,
+    [memberId],
+  );
+}
+
+export async function getEventIdBySlug(slug: string): Promise<string | null> {
+  const rows = await query<{ id: string }>(
+    `SELECT id FROM events WHERE slug = $1 LIMIT 1`,
+    [slug],
+  );
+  return rows[0]?.id ?? null;
 }

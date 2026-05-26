@@ -8,10 +8,12 @@ import {
   listPastEvents,
   countRsvps,
 } from "@/lib/queries/events";
+import { getSessionFromCookies } from "@/lib/auth";
+import { listSavedEvents } from "@/lib/queries/account";
 import type { Event } from "@/types/db";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const description =
   "Upcoming festivals, classes, charity drives and youth events from the Bharatiya Heritage Foundation.";
@@ -60,6 +62,14 @@ export default async function EventsPage({
   }
 
   const rsvpInfos = await Promise.all(events.map((e) => countRsvps(e.id)));
+
+  const session = await getSessionFromCookies();
+  const isMember = session?.role === "member";
+  const savedByEventId = new Map<string, string>();
+  if (isMember && session) {
+    const saved = await listSavedEvents(session.sub, false);
+    for (const s of saved) savedByEventId.set(s.event_id, s.id);
+  }
 
   function hrefFor(nextFilter?: string, nextType?: string) {
     const params = new URLSearchParams();
@@ -163,7 +173,13 @@ export default async function EventsPage({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((e, i) => (
-                <EventCard key={e.id} event={e} rsvpInfo={rsvpInfos[i]} />
+                <EventCard
+                  key={e.id}
+                  event={e}
+                  rsvpInfo={rsvpInfos[i]}
+                  isMember={isMember}
+                  initialSavedId={savedByEventId.get(e.id) ?? null}
+                />
               ))}
             </div>
           )}

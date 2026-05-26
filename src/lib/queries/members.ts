@@ -5,14 +5,17 @@ import type { Member } from '@/types/db';
 const PUBLIC_MEMBER_COLUMNS = `
   id, email, first_name, last_name, phone, city, family_size, how_heard,
   interests, bio, photo_url, email_verified_at, directory_opt_in,
-  newsletter_opt_in, suspended_at, created_at, updated_at
+  newsletter_opt_in, event_reminders_opt_in, donation_receipts_opt_in,
+  member_messages_opt_in, suspended_at, created_at, updated_at
 `;
 
 const FULL_MEMBER_COLUMNS = `
   id, email, password_hash, first_name, last_name, phone, city, family_size,
   how_heard, interests, bio, photo_url, email_verified_at,
   email_verification_token, password_reset_token, password_reset_expires_at,
-  directory_opt_in, newsletter_opt_in, suspended_at, created_at, updated_at
+  directory_opt_in, newsletter_opt_in, event_reminders_opt_in,
+  donation_receipts_opt_in, member_messages_opt_in, suspended_at,
+  created_at, updated_at
 `;
 
 export type PublicMember = Omit<

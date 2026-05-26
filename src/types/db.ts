@@ -27,11 +27,23 @@ export const memberSchema = z.object({
   password_reset_expires_at: z.date().nullable(),
   directory_opt_in: z.boolean(),
   newsletter_opt_in: z.boolean(),
+  event_reminders_opt_in: z.boolean(),
+  donation_receipts_opt_in: z.boolean(),
+  member_messages_opt_in: z.boolean(),
   suspended_at: z.date().nullable(),
   created_at: z.date(),
   updated_at: z.date(),
 });
 export type Member = z.infer<typeof memberSchema>;
+
+export const savedEventSchema = z.object({
+  id: z.string().uuid(),
+  member_id: z.string().uuid(),
+  event_id: z.string().uuid(),
+  note: z.string().nullable(),
+  created_at: z.date(),
+});
+export type SavedEvent = z.infer<typeof savedEventSchema>;
 
 export const adminRoleSchema = z.enum(['super_admin', 'editor', 'contributor']);
 export type AdminRole = z.infer<typeof adminRoleSchema>;

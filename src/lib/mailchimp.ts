@@ -14,7 +14,8 @@ interface MailchimpListsApi {
     subscriberHash: string,
     body: {
       email_address: string;
-      status_if_new: 'subscribed' | 'pending';
+      status?: 'subscribed' | 'unsubscribed' | 'pending';
+      status_if_new?: 'subscribed' | 'pending';
       merge_fields?: Record<string, string>;
       tags?: string[];
     },
@@ -72,6 +73,33 @@ export async function syncNewsletterSubscription(
         : String(err);
     // eslint-disable-next-line no-console
     console.error('[mailchimp]', message);
+    return { status: 'error', error: message };
+  }
+}
+
+export async function unsubscribeFromNewsletter(
+  email: string,
+): Promise<MailchimpSyncResult> {
+  if (!MAILCHIMP_ENABLED || !client || !AUDIENCE_ID) {
+    return { status: 'stub' };
+  }
+  try {
+    const subscriberHash = createHash('md5')
+      .update(email.toLowerCase())
+      .digest('hex');
+    await client.lists.setListMember(AUDIENCE_ID, subscriberHash, {
+      email_address: email,
+      status: 'unsubscribed',
+      status_if_new: 'subscribed',
+    });
+    return { status: 'subscribed' };
+  } catch (err) {
+    const message =
+      err && typeof err === 'object' && 'message' in err
+        ? String((err as { message: unknown }).message)
+        : String(err);
+    // eslint-disable-next-line no-console
+    console.error('[mailchimp][unsubscribe]', message);
     return { status: 'error', error: message };
   }
 }

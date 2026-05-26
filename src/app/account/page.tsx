@@ -6,6 +6,8 @@ import {
   HeartHandshake,
   BookOpen,
   Settings,
+  Calendar,
+  Bookmark,
 } from "lucide-react";
 import { getSessionFromCookies } from "@/lib/auth";
 import { getMemberById } from "@/lib/queries/members";
@@ -19,6 +21,9 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { GivingSparkline } from "@/components/account/GivingSparkline";
+import { ActivityTimeline } from "@/components/account/ActivityTimeline";
+import { SavedEventsCard } from "@/components/account/SavedEventsCard";
+import { CancelRsvpButton } from "@/components/account/CancelRsvpButton";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +96,9 @@ export default async function AccountDashboardPage() {
             <h1 className="font-display text-3xl md:text-4xl text-indigo leading-tight">
               {member.first_name}
             </h1>
+            <p className="text-sm text-warm-gray mt-1">
+              Member since {format(new Date(member.created_at), "MMMM yyyy")}
+            </p>
           </div>
         </div>
         <p className="mt-4 text-warm-gray max-w-2xl">
@@ -164,7 +172,7 @@ export default async function AccountDashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {upcoming.map((r) => (
-              <Card key={r.id}>
+              <Card key={r.id} className="flex flex-col">
                 <p className="text-xs uppercase tracking-widest text-saffron">
                   {format(new Date(r.event_starts_at), "MMM d, yyyy")}
                 </p>
@@ -175,10 +183,44 @@ export default async function AccountDashboardPage() {
                   {format(new Date(r.event_starts_at), "h:mm a")} ·{" "}
                   {r.party_size} {r.party_size === 1 ? "guest" : "guests"}
                 </p>
+                <div className="mt-3">
+                  <CancelRsvpButton
+                    rsvpId={r.id}
+                    eventTitle={r.event_title}
+                  />
+                </div>
               </Card>
             ))}
           </div>
         )}
+      </section>
+
+      <section aria-labelledby="recent-activity">
+        <h2
+          id="recent-activity"
+          className="font-display text-2xl text-indigo mb-4"
+        >
+          Recent activity
+        </h2>
+        <ActivityTimeline memberId={session.sub} />
+      </section>
+
+      <section aria-labelledby="saved-events">
+        <div className="flex items-baseline justify-between mb-4">
+          <h2
+            id="saved-events"
+            className="font-display text-2xl text-indigo"
+          >
+            Saved events
+          </h2>
+          <Link
+            href="/account/saved"
+            className="text-sm text-saffron hover:text-amber-burnt font-medium"
+          >
+            View all →
+          </Link>
+        </div>
+        <SavedEventsCard memberId={session.sub} />
       </section>
 
       <section aria-labelledby="recent-exclusive">
@@ -231,7 +273,17 @@ export default async function AccountDashboardPage() {
         <h2 id="quick-links" className="font-display text-2xl text-indigo mb-4">
           Quick links
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <QuickLink
+            href="/account/rsvps"
+            icon={<Calendar size={20} />}
+            label="Your RSVPs"
+          />
+          <QuickLink
+            href="/account/saved"
+            icon={<Bookmark size={20} />}
+            label="Saved events"
+          />
           <QuickLink
             href="/account/directory"
             icon={<Users size={20} />}

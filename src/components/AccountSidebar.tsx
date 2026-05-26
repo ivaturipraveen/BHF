@@ -10,6 +10,7 @@ import {
   BookOpen,
   Settings,
   UsersRound,
+  Calendar,
   LogOut,
   type LucideIcon,
 } from "lucide-react";
@@ -18,6 +19,11 @@ import { cn } from "@/lib/cn";
 export interface SidebarMember {
   firstName: string;
   lastName: string;
+}
+
+export interface SidebarCompleteness {
+  percent: number;
+  missing: string[];
 }
 
 interface NavItem {
@@ -29,6 +35,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: "/account", label: "Dashboard", icon: Home },
   { href: "/account/directory", label: "Member directory", icon: Users },
+  { href: "/account/rsvps", label: "Your RSVPs", icon: Calendar },
   {
     href: "/account/donations",
     label: "Donation history",
@@ -61,8 +68,16 @@ async function doSignOut() {
   window.location.assign("/");
 }
 
-export function AccountSidebar({ member }: { member: SidebarMember }) {
+export function AccountSidebar({
+  member,
+  completeness,
+}: {
+  member: SidebarMember;
+  completeness?: SidebarCompleteness;
+}) {
   const pathname = usePathname() ?? "/account";
+  const showProgress =
+    completeness !== undefined && completeness.percent < 100;
 
   return (
     <aside
@@ -70,6 +85,30 @@ export function AccountSidebar({ member }: { member: SidebarMember }) {
       className="md:sticky md:top-24 md:w-64 md:flex-shrink-0"
     >
       <div className="hidden md:block bg-white border border-gray-200 rounded-xl p-5">
+        {completeness !== undefined ? (
+          <Link
+            href="/account/profile"
+            className="block mb-4"
+            aria-label="Profile completeness"
+          >
+            <div className="flex items-center justify-between text-xs font-medium text-warm-gray mb-1">
+              <span>Profile</span>
+              <span className="text-indigo">{completeness.percent}% complete</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream">
+              <div
+                className="h-full bg-saffron transition-all"
+                style={{ width: `${Math.max(0, Math.min(100, completeness.percent))}%` }}
+                aria-hidden="true"
+              />
+            </div>
+            {showProgress && completeness.missing.length > 0 ? (
+              <p className="mt-1 text-[11px] text-warm-gray truncate">
+                Next: {completeness.missing[0]}
+              </p>
+            ) : null}
+          </Link>
+        ) : null}
         <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
           <div
             aria-hidden

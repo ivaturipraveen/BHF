@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/Select";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { FeedbackBanner } from "@/components/ui/FeedbackBanner";
 
 type InterestKey = "festivals" | "youth_programs" | "seva" | "classes";
 
@@ -61,6 +62,85 @@ export function ProfileForm({ initialMember }: ProfileFormProps) {
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  const [photoUploading, setPhotoUploading] = React.useState(false);
+  const [photoBanner, setPhotoBanner] = React.useState<
+    { variant: "success" | "error"; message: string } | null
+  >(null);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  function initialsOf(): string {
+    return `${(firstName[0] ?? "").toUpperCase()}${
+      (lastName[0] ?? "").toUpperCase()
+    }` || "?";
+  }
+
+  async function uploadPhotoFile(file: File) {
+    setPhotoBanner(null);
+    setPhotoUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/me/photo-upload", {
+        method: "POST",
+        body: fd,
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+      if (res.status === 201 && data.url) {
+        setPhotoUrl(data.url);
+        setPhotoBanner({
+          variant: "success",
+          message: "Photo updated.",
+        });
+        return;
+      }
+      setPhotoBanner({
+        variant: "error",
+        message: data.error ?? "Could not upload photo. Please try again.",
+      });
+    } catch {
+      setPhotoBanner({
+        variant: "error",
+        message: "Network error. Please try again.",
+      });
+    } finally {
+      setPhotoUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function removePhoto() {
+    if (photoUploading) return;
+    setPhotoBanner(null);
+    setPhotoUploading(true);
+    try {
+      const res = await fetch("/api/me", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ photoUrl: null }),
+      });
+      if (res.status === 200) {
+        setPhotoUrl("");
+        setPhotoBanner({ variant: "success", message: "Photo removed." });
+        return;
+      }
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      setPhotoBanner({
+        variant: "error",
+        message: data.error ?? "Could not remove photo. Please try again.",
+      });
+    } catch {
+      setPhotoBanner({
+        variant: "error",
+        message: "Network error. Please try again.",
+      });
+    } finally {
+      setPhotoUploading(false);
+    }
+  }
 
   function toggleInterest(key: InterestKey) {
     setInterests((prev) =>
@@ -143,13 +223,74 @@ export function ProfileForm({ initialMember }: ProfileFormProps) {
         onChange={(e) => setBio(e.target.value)}
         hint="A short introduction — visible in the directory if you opt in."
       />
-      <Input
-        label="Photo URL"
-        type="url"
-        value={photoUrl}
-        onChange={(e) => setPhotoUrl(e.target.value)}
-        hint="Paste a link to a hosted photo (uploads coming soon)."
-      />
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-4">
+          {photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={photoUrl}
+              alt="Your profile photo"
+              className="h-24 w-24 rounded-full object-cover border border-gray-200"
+            />
+          ) : (
+            <div
+              aria-hidden="true"
+              className="flex h-24 w-24 items-center justify-center rounded-full bg-saffron text-white font-display text-2xl font-semibold"
+            >
+              {initialsOf()}
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void uploadPhotoFile(f);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={photoUploading}
+              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-indigo bg-transparent px-4 py-2 text-sm font-semibold text-indigo hover:bg-indigo hover:text-white disabled:opacity-60 min-h-[44px]"
+            >
+              {photoUploading ? (
+                <>
+                  <Spinner size={16} />
+                  Uploading…
+                </>
+              ) : (
+                "Upload new photo"
+              )}
+            </button>
+            {photoUrl ? (
+              <button
+                type="button"
+                onClick={removePhoto}
+                disabled={photoUploading}
+                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-60 self-start"
+              >
+                Remove photo
+              </button>
+            ) : null}
+          </div>
+        </div>
+        {photoBanner ? (
+          <FeedbackBanner variant={photoBanner.variant}>
+            {photoBanner.message}
+          </FeedbackBanner>
+        ) : null}
+        <Input
+          label="Or paste a URL"
+          type="url"
+          value={photoUrl}
+          onChange={(e) => setPhotoUrl(e.target.value)}
+          hint="JPEG, PNG, WEBP, or AVIF up to 5MB. Saved when you click Save changes."
+        />
+      </div>
 
       <Select
         label="Family size"

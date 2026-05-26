@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionFromCookies } from "@/lib/auth";
 import { getMemberById } from "@/lib/queries/members";
 import { Card } from "@/components/ui/Card";
 import { ProfileForm } from "@/components/forms/ProfileForm";
+import { ChangePasswordCard } from "@/components/account/ChangePasswordCard";
+import { PreferencesCard } from "@/components/account/PreferencesCard";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 
 export const dynamic = "force-dynamic";
@@ -43,29 +44,17 @@ export default async function ProfileSettingsPage() {
         />
       </Card>
 
-      <Card>
-        <h2 className="font-display text-xl text-indigo">Change password</h2>
-        <p className="mt-2 text-sm text-warm-gray">
-          Use the password reset flow if you need a new password.{" "}
-          <Link
-            href="/forgot-password"
-            className="text-saffron hover:text-amber-burnt font-medium"
-          >
-            Reset password →
-          </Link>
-        </p>
-      </Card>
+      <ChangePasswordCard />
 
-      <Card>
-        <h2 className="font-display text-xl text-indigo">Email preferences</h2>
-        <p className="mt-2 text-sm text-warm-gray">
-          Newsletter, event reminders, and donation receipts can be adjusted on
-          the personal-information form above.{" "}
-          <span className="text-warm-gray/80">
-            Granular preferences coming soon.
-          </span>
-        </p>
-      </Card>
+      <PreferencesCard
+        initial={{
+          newsletterOptIn: member.newsletter_opt_in,
+          directoryOptIn: member.directory_opt_in,
+          eventRemindersOptIn: member.event_reminders_opt_in,
+          donationReceiptsOptIn: member.donation_receipts_opt_in,
+          memberMessagesOptIn: member.member_messages_opt_in,
+        }}
+      />
 
       <Card>
         <h2 className="font-display text-xl text-indigo">Data export</h2>

@@ -6,7 +6,16 @@ import { listMyDonations } from "@/lib/queries/account";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { CancelRecurringButton } from "@/components/account/CancelRecurringButton";
 import type { Donation } from "@/types/db";
+
+function canCancelRecurring(d: Donation): boolean {
+  return (
+    (d.type === "monthly" || d.type === "yearly") &&
+    d.status === "succeeded" &&
+    d.stripe_subscription_id !== null
+  );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -76,18 +85,19 @@ export default async function DonationsPage() {
                 <th className="text-left px-4 py-3 font-medium">Type</th>
                 <th className="text-left px-4 py-3 font-medium">Status</th>
                 <th className="text-left px-4 py-3 font-medium">Receipt</th>
+                <th className="text-left px-4 py-3 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {donations.map((d) => (
                 <tr key={d.id} className="border-t border-gray-200">
-                  <td className="px-4 py-3 text-warm-gray">
+                  <td className="px-4 py-3 text-warm-gray whitespace-nowrap">
                     {format(new Date(d.created_at), "MMM d, yyyy")}
                   </td>
-                  <td className="px-4 py-3 font-medium text-indigo">
+                  <td className="px-4 py-3 font-medium text-indigo whitespace-nowrap">
                     {formatCents(d.amount_cents)}
                   </td>
-                  <td className="px-4 py-3 text-warm-gray capitalize">
+                  <td className="px-4 py-3 text-warm-gray capitalize whitespace-nowrap">
                     {d.type.replace("_", " ")}
                   </td>
                   <td className="px-4 py-3">
@@ -110,6 +120,17 @@ export default async function DonationsPage() {
                       >
                         View
                       </Link>
+                    ) : (
+                      <span className="text-warm-gray/60">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {canCancelRecurring(d) ? (
+                      <CancelRecurringButton
+                        donationId={d.id}
+                        amountCents={d.amount_cents}
+                        type={d.type as "monthly" | "yearly"}
+                      />
                     ) : (
                       <span className="text-warm-gray/60">—</span>
                     )}
@@ -139,20 +160,6 @@ export default async function DonationsPage() {
         </p>
       </Card>
 
-      <Card className="bg-cream border-amber-300">
-        <p className="text-sm text-warm-gray">
-          <span className="font-medium text-indigo">Heads up:</span> Recurring
-          donation management is coming soon. To change a recurring gift today,
-          please contact{" "}
-          <a
-            href="mailto:support@bhfcommunity.org"
-            className="text-saffron hover:text-amber-burnt font-medium"
-          >
-            support@bhfcommunity.org
-          </a>
-          .
-        </p>
-      </Card>
     </div>
   );
 }

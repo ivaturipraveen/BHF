@@ -14,39 +14,62 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// All Unsplash URLs below are PLACEHOLDERS until BHF supplies final art.
-const PH = {
-  // Festival of lights
-  diwali: 'https://images.unsplash.com/photo-1604423481997-7551b97e0d4d?w=1600',
-  // Festival of colors
-  holi: 'https://images.unsplash.com/photo-1615875218538-1d387c5a90b1?w=1600',
-  // Charity / hands
-  charity: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600',
-  // Hike / nature
-  hike: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600',
-  // Yoga
-  yoga: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=1600',
-  // Kite festival
-  kite: 'https://images.unsplash.com/photo-1551731409-43eb3e517a1a?w=1600',
-  // Art / contest
-  art: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1600',
-  // Youth
-  youth: 'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1600',
-  // Rangoli
-  rangoli: 'https://images.unsplash.com/photo-1604608672516-f1b9b1d1fcfa?w=1600',
-  // Vedic chanting / spiritual
-  vedic: 'https://images.unsplash.com/photo-1604608672516-f1b9b1d1fcfa?w=1600',
-  // Hero
-  hero: 'https://images.unsplash.com/photo-1604608672516-f1b9b1d1fcfa?w=2400',
-  // Generic community
-  community: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=1600',
-  // Portraits (leadership)
-  portrait1: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600',
-  portrait2: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600',
-  portrait3: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600',
-  portrait4: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600',
-  portrait5: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600',
-  portrait6: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600',
+// Curated Unsplash URLs — warm, communal, heritage-respectful. Tuned to the
+// brand palette; PRD says these are placeholders until BHF supplies final art.
+const u = (id: string, w = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const PH: {
+  diwali: string | null;
+  holi: string | null;
+  charity: string;
+  hike: string;
+  yoga: string;
+  kite: string;
+  art: string;
+  youth: string;
+  rangoli: string | null;
+  vedic: string;
+  hero: string | null;
+  community: string;
+  portrait1: string;
+  portrait2: string;
+  portrait3: string;
+  portrait4: string;
+  portrait5: string;
+  portrait6: string;
+} = {
+  // Festival of lights — broken Unsplash ID, fall back to brand placeholder
+  diwali: null,
+  // Festival of colors — broken Unsplash ID, fall back to brand placeholder
+  holi: null,
+  // Seva / charity — community service hands at work
+  charity: u('photo-1488521787991-ed7bbaae773c'),
+  // Heritage walk / nature / mountains
+  hike: u('photo-1551632811-561732d1e306'),
+  // Yoga / wellness practice
+  yoga: u('photo-1545205597-3d9d02c29597'),
+  // Festival lights / kite-feeling celebration
+  kite: u('photo-1551731409-43eb3e517a1a'),
+  // Art / colors / craft
+  art: u('photo-1513364776144-60967b0f800f'),
+  // Youth / learning / classroom
+  youth: u('photo-1529390079861-591de354faf5'),
+  // Rangoli / broken Unsplash ID, fall back to brand placeholder
+  rangoli: null,
+  // Vedic chanting / spiritual gathering
+  vedic: u('photo-1572804013427-4d7ca7268217'),
+  // Hero — broken Unsplash ID, fall back to brand placeholder
+  hero: null,
+  // Generic community / gathering / family
+  community: u('photo-1531058020387-3be344556be6'),
+  // Portraits (leadership) — kept; warm natural light, professional but human
+  portrait1: u('photo-1507003211169-0a1dd7228f2d', 600),
+  portrait2: u('photo-1494790108377-be9c29b29330', 600),
+  portrait3: u('photo-1500648767791-00dcc994a43e', 600),
+  portrait4: u('photo-1573496359142-b8d87734a5a2', 600),
+  portrait5: u('photo-1472099645785-5658abf4ff4e', 600),
+  portrait6: u('photo-1438761681033-6461ffad8d80', 600),
 };
 
 interface EventSeed {
@@ -57,7 +80,7 @@ interface EventSeed {
   ends_at: string | null;
   location_name: string;
   location_address: string;
-  hero_image_url: string;
+  hero_image_url: string | null;
   type: 'festival' | 'class' | 'charity' | 'youth' | 'other';
   status: 'published';
   rsvp_capacity: number | null;
@@ -231,7 +254,7 @@ interface ProgramSeed {
   description_md: string;
   who_for: string;
   schedule_md: string;
-  hero_image_url: string;
+  hero_image_url: string | null;
   featured: boolean;
   display_order: number;
 }
@@ -428,10 +451,12 @@ const galleryPhotoSeeds: Array<{
   display_order: number;
 }> = [];
 
-const photoSources = [
+// gallery_photos.file_url is NOT NULL, so drop any themes whose Unsplash IDs
+// are broken (currently: holi, diwali, rangoli, hero).
+const photoSources: string[] = [
   PH.holi, PH.diwali, PH.community, PH.charity, PH.hike, PH.yoga,
   PH.kite, PH.rangoli, PH.art, PH.youth, PH.vedic, PH.hero,
-];
+].filter((src): src is string => typeof src === 'string' && src.length > 0);
 
 for (const cat of galleryCategories) {
   for (let i = 0; i < 6; i++) {

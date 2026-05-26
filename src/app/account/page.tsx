@@ -18,6 +18,7 @@ import { listExclusiveContent } from "@/lib/queries/exclusiveContent";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { GivingSparkline } from "@/components/account/GivingSparkline";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,12 @@ function upcomingRsvps(rsvps: MyRsvp[]): MyRsvp[] {
     .slice(0, 3);
 }
 
+function initials(firstName: string, lastName: string): string {
+  return `${(firstName[0] ?? "").toUpperCase()}${
+    (lastName[0] ?? "").toUpperCase()
+  }`;
+}
+
 export default async function AccountDashboardPage() {
   const session = await getSessionFromCookies();
   if (!session) redirect("/login?next=/account");
@@ -68,13 +75,27 @@ export default async function AccountDashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <header>
-        <h1 className="font-display text-3xl md:text-4xl text-indigo">
-          Namaste, {member.first_name}
-        </h1>
-        <p className="mt-2 text-warm-gray">
-          Welcome to your member dashboard. Here&apos;s your community at a
-          glance.
+      {/* Warm welcome banner with avatar circle */}
+      <header className="rounded-2xl bg-cream border border-saffron/20 p-6 md:p-8">
+        <div className="flex items-center gap-4">
+          <div
+            aria-hidden="true"
+            className="flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-saffron text-white font-display text-xl md:text-2xl font-semibold"
+          >
+            {initials(member.first_name, member.last_name)}
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-saffron font-semibold">
+              Welcome back
+            </p>
+            <h1 className="font-display text-3xl md:text-4xl text-indigo leading-tight">
+              {member.first_name}
+            </h1>
+          </div>
+        </div>
+        <p className="mt-4 text-warm-gray max-w-2xl">
+          Here&apos;s your community at a glance — your RSVPs, your giving, and
+          new exclusive content from BHF.
         </p>
       </header>
 
@@ -110,6 +131,13 @@ export default async function AccountDashboardPage() {
           <p className="mt-2 font-display text-3xl text-indigo">0</p>
           <p className="text-sm text-warm-gray">Enrollments (v1.1)</p>
         </Card>
+      </section>
+
+      <section aria-labelledby="your-giving">
+        <h2 id="your-giving" className="sr-only">
+          Your giving
+        </h2>
+        <GivingSparkline donations={donations} />
       </section>
 
       <section aria-labelledby="upcoming-rsvps">

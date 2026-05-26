@@ -30,6 +30,12 @@ export default async function Footer() {
         <SectionDivider variant="footer" />
       </div>
       <Container>
+        {/* Brand statement */}
+        <p className="text-center max-w-3xl mx-auto mb-12 font-display italic text-cream text-lg md:text-xl leading-relaxed">
+          Building community, celebrating culture, and empowering the next
+          generation through dharmic values.
+        </p>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="inline-flex flex-col items-start gap-3">
@@ -143,17 +149,19 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-cream/20 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-cream/10 rounded-xl p-6">
-            <div>
-              <h4 className="font-display text-lg text-white">
-                Get our newsletter
-              </h4>
-              <p className="text-sm text-cream/80 mt-1">
-                Monthly updates — festivals, programs, community news.
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4">
+        <div className="mt-12 border-t border-cream/20 pt-10">
+          <div className="rounded-2xl border border-cream/20 bg-cream/10 p-6 md:p-8">
+            <p className="text-xs font-semibold tracking-widest uppercase text-saffron text-center">
+              Connect
+            </p>
+            <h4 className="mt-2 font-display text-2xl md:text-3xl text-white text-center">
+              Get our monthly digest
+            </h4>
+            <p className="mt-2 text-sm md:text-base text-cream/80 text-center max-w-xl mx-auto">
+              Events, programs, and community stories — delivered once a
+              month. Unsubscribe anytime.
+            </p>
+            <div className="mt-6 max-w-md mx-auto bg-white rounded-xl p-4">
               <NewsletterForm source="footer" />
             </div>
           </div>

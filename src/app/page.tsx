@@ -9,6 +9,10 @@ import { DonateCTA } from "@/components/sections/DonateCTA";
 import { NewsletterSignup } from "@/components/sections/NewsletterSignup";
 import { SponsorGrid } from "@/components/sections/SponsorGrid";
 import { SectionDivider } from "@/components/sections/SectionDivider";
+import { WelcomeBanner } from "@/components/sections/WelcomeBanner";
+import { StorySection } from "@/components/sections/StorySection";
+import { TestimonialBand } from "@/components/sections/TestimonialBand";
+import { FadeIn } from "@/components/ui/FadeIn";
 import { OrganizationJsonLd } from "@/components/OrganizationJsonLd";
 
 const description =
@@ -43,19 +47,40 @@ export default function HomePage() {
       <OrganizationJsonLd />
       <main>
         <Hero />
-        <ImpactStats />
+        <WelcomeBanner />
+        <FadeIn>
+          <ImpactStats />
+        </FadeIn>
+        <FadeIn delayMs={75}>
+          <StorySection />
+        </FadeIn>
         <SectionDivider />
-        <UpcomingEvents />
+        <FadeIn delayMs={150}>
+          <UpcomingEvents />
+        </FadeIn>
         <SectionDivider />
-        <ProgramsPreview />
+        <FadeIn delayMs={225}>
+          <ProgramsPreview />
+        </FadeIn>
+        <FadeIn>
+          <TestimonialBand />
+        </FadeIn>
         <SectionDivider />
-        <GalleryPreview />
+        <FadeIn delayMs={300}>
+          <GalleryPreview />
+        </FadeIn>
         <SectionDivider />
-        <MissionValues />
+        <FadeIn delayMs={375}>
+          <MissionValues />
+        </FadeIn>
         <SectionDivider />
-        <DonateCTA />
+        <FadeIn delayMs={450}>
+          <DonateCTA />
+        </FadeIn>
         <SectionDivider />
-        <NewsletterSignup />
+        <FadeIn delayMs={525}>
+          <NewsletterSignup />
+        </FadeIn>
         <SponsorGrid />
       </main>
     </>

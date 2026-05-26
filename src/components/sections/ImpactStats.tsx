@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { CountUp } from "@/components/ui/CountUp";
 import { getHomepageConfig } from "@/lib/queries/homepage";
 
 const stats: Array<{
@@ -24,7 +25,7 @@ export async function ImpactStats() {
           {stats.map((stat) => (
             <div key={stat.key} className="text-center">
               <div className="font-display text-4xl md:text-5xl text-saffron">
-                {cfg[stat.key].toLocaleString()}
+                <CountUp end={cfg[stat.key]} />
               </div>
               <p className="mt-2 text-sm text-warm-gray">{stat.label}</p>
             </div>

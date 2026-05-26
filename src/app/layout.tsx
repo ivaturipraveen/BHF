@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { PublicChrome } from "@/components/PublicChrome";
+import { StickyDonateBar } from "@/components/StickyDonateBar";
 import PlausibleScript from "@/components/PlausibleScript";
 import SentryInit from "@/components/SentryInit";
 import "./globals.css";
@@ -78,6 +79,9 @@ export default function RootLayout({
         </div>
         <PublicChrome>
           <Footer />
+        </PublicChrome>
+        <PublicChrome>
+          <StickyDonateBar />
         </PublicChrome>
       </body>
     </html>

@@ -16,7 +16,7 @@ async function getDoc(path: string): Promise<{ status: number; $: cheerio.Cheeri
     headers: { 'x-forwarded-for': uniqueIp() },
   });
   const body = await res.text();
-  return { status: res.status, $: cheerio.load(body), body };
+  return { status: res.status, $: cheerio.load(body) as unknown as cheerio.CheerioAPI, body };
 }
 
 beforeAll(async () => {

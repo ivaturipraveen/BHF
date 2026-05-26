@@ -7,11 +7,13 @@ import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Markdown } from "@/components/ui/Markdown";
+import { EventCard } from "@/components/cards/EventCard";
 import { RsvpForm } from "@/components/forms/RsvpForm";
 import { PhotoSubmissionForm } from "@/components/forms/PhotoSubmissionForm";
 import {
   getEventBySlug,
   countRsvps,
+  listUpcomingEvents,
 } from "@/lib/queries/events";
 import {
   getGalleryCategoryBySlug,
@@ -107,6 +109,9 @@ export default async function EventDetailPage({
     ? await listPhotosByCategory(galleryCategory.id)
     : [];
 
+  const upcoming = await listUpcomingEvents(6);
+  const relatedEvents = upcoming.filter((e) => e.id !== event.id).slice(0, 3);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -135,23 +140,25 @@ export default async function EventDetailPage({
         dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }}
       />
 
-      {event.hero_image_url ? (
-        <div className="relative aspect-[16/6] w-full bg-cream">
-          <Image
-            src={event.hero_image_url}
-            alt={event.title}
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover"
-          />
+      {/* Full-bleed cinematic hero */}
+      <section className="relative isolate min-h-[55vh] md:min-h-[65vh] flex items-end overflow-hidden bg-cream">
+        <div className="absolute inset-0 -z-10">
+          {event.hero_image_url ? (
+            <Image
+              src={event.hero_image_url}
+              alt=""
+              aria-hidden="true"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ filter: "brightness(0.65) saturate(1.05)" }}
+            />
+          ) : null}
+          <div className="absolute inset-0 bg-indigo/60" aria-hidden="true" />
         </div>
-      ) : (
-        <div className="bg-cream py-20" />
-      )}
 
-      <section className="bg-white py-12">
-        <Container>
+        <Container className="relative z-10 py-16 md:py-24">
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge variant="amber">Free</Badge>
             {event.members_only ? (
@@ -166,25 +173,28 @@ export default async function EventDetailPage({
             ) : null}
           </div>
 
-          <h1 className="font-display text-4xl md:text-5xl text-indigo mb-4">
+          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-cream leading-tight max-w-3xl">
             {event.title}
           </h1>
 
-          <div className="flex flex-col gap-2 text-warm-gray mb-8">
-            <span className="inline-flex items-center gap-2">
-              <Calendar size={18} className="text-saffron" />
-              {format(startsAt, "EEEE, MMM d, yyyy · h:mm a")}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-cream/15 backdrop-blur px-4 py-2 text-sm text-cream border border-cream/20">
+              <Calendar size={16} className="text-saffron" />
+              {format(startsAt, "EEE, MMM d, yyyy · h:mm a")}
               {endsAt ? ` – ${format(endsAt, "h:mm a")}` : ""}
             </span>
             {event.location_name ? (
-              <span className="inline-flex items-center gap-2">
-                <MapPin size={18} className="text-saffron" />
+              <span className="inline-flex items-center gap-2 rounded-full bg-cream/15 backdrop-blur px-4 py-2 text-sm text-cream border border-cream/20">
+                <MapPin size={16} className="text-saffron" />
                 {event.location_name}
-                {event.location_address ? `, ${event.location_address}` : ""}
               </span>
             ) : null}
           </div>
+        </Container>
+      </section>
 
+      <section className="bg-white py-12 md:py-16">
+        <Container>
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
             <div className="max-w-3xl">
               <Markdown content={event.description_md} />
@@ -249,9 +259,9 @@ export default async function EventDetailPage({
               ) : null}
             </div>
 
-            <aside className="lg:sticky lg:top-24 self-start space-y-6">
+            <aside className="self-start space-y-6">
               {!isPast ? (
-                <div className="bg-cream border border-saffron/30 rounded-xl p-6">
+                <div className="event-rsvp-sticky lg:sticky lg:top-24 bg-cream border border-saffron/30 rounded-xl p-6">
                   <h3 className="font-display text-lg text-indigo mb-3">
                     RSVP
                   </h3>
@@ -281,6 +291,21 @@ export default async function EventDetailPage({
           </div>
         </Container>
       </section>
+
+      {relatedEvents.length > 0 ? (
+        <section className="bg-cream py-16">
+          <Container>
+            <h2 className="font-display text-2xl md:text-3xl text-indigo mb-8">
+              Related events
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedEvents.map((e) => (
+                <EventCard key={e.id} event={e} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
     </main>
   );
 }

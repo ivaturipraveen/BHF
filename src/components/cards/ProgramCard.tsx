@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { PhotoFallback } from "@/components/ui/PhotoFallback";
 import { cn } from "@/lib/cn";
 import type { Program } from "@/types/db";
 
@@ -29,7 +30,7 @@ export function ProgramCard({ program, className }: ProgramCardProps) {
     <Card
       variant="default"
       className={cn(
-        "flex flex-col p-0 overflow-hidden transition-shadow hover:shadow-md",
+        "flex flex-col p-0 overflow-hidden lift-on-hover",
         className,
       )}
     >
@@ -43,9 +44,7 @@ export function ProgramCard({ program, className }: ProgramCardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-cream">
-            <span className="font-display text-3xl text-saffron/60">ॐ</span>
-          </div>
+          <PhotoFallback />
         )}
         <div className="absolute top-3 left-3">
           <Badge variant="indigo">{categoryLabels[program.category]}</Badge>
@@ -65,7 +64,7 @@ export function ProgramCard({ program, className }: ProgramCardProps) {
             href={`/programs/${program.slug}`}
             className="text-saffron font-medium hover:text-amber-burnt"
           >
-            Learn more →
+            Learn more <span className="read-more-arrow">→</span>
           </Link>
         </div>
       </div>

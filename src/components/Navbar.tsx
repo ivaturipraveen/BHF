@@ -6,8 +6,50 @@ import { ButtonLink } from "@/components/ui/Button";
 import { SessionChip, MobileSessionLinks } from "@/components/SessionChip";
 import { NavbarMobileMenu } from "@/components/NavbarMobileMenu";
 import { DesktopNavLinks, MobileNavLinks } from "@/components/NavLinks";
+import { ProgramsMegaMenu, type ProgramsMegaMenuColumn } from "@/components/ProgramsMegaMenu";
+import { SiteSearchButton } from "@/components/SiteSearchButton";
+import { listPrograms } from "@/lib/queries/programs";
 
-export default function Navbar() {
+// Programs link is rendered separately via ProgramsMegaMenu.
+const desktopNavLinks = navLinks.filter((l) => l.href !== "/programs");
+
+const CATEGORY_LABELS: Record<
+  ProgramsMegaMenuColumn["category"],
+  "cultural" | "educational" | "charitable" | "wellness" | "youth"
+> = {
+  Cultural: "cultural",
+  Educational: "educational",
+  Charitable: "charitable",
+  Wellness: "wellness",
+  Youth: "youth",
+};
+
+const CATEGORY_ORDER: ProgramsMegaMenuColumn["category"][] = [
+  "Cultural",
+  "Educational",
+  "Charitable",
+  "Wellness",
+  "Youth",
+];
+
+async function buildMegaMenuColumns(): Promise<ProgramsMegaMenuColumn[]> {
+  const all = await listPrograms();
+  return CATEGORY_ORDER.map((category) => {
+    const dbKey = CATEGORY_LABELS[category];
+    const programs = all
+      .filter((p) => p.category === dbKey)
+      .slice(0, 3)
+      .map((p) => ({ slug: p.slug, title: p.title }));
+    return { category, programs };
+  });
+}
+
+export default async function Navbar() {
+  const megaMenuColumns = await buildMegaMenuColumns();
+
+  // Insert Programs at its original position in the desktop link list
+  const programsIndex = navLinks.findIndex((l) => l.href === "/programs");
+
   return (
     <nav
       role="navigation"
@@ -36,10 +78,13 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
-            <DesktopNavLinks links={navLinks} />
+            <DesktopNavLinks links={desktopNavLinks.slice(0, programsIndex)} />
+            <ProgramsMegaMenu columns={megaMenuColumns} />
+            <DesktopNavLinks links={desktopNavLinks.slice(programsIndex)} />
           </div>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2">
+            <SiteSearchButton />
             <ButtonLink href={siteConfig.donateHref} variant="primary" size="sm">
               Donate
             </ButtonLink>

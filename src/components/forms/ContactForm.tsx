@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { FeedbackBanner } from "@/components/ui/FeedbackBanner";
 
 type ContactType =
   | "volunteer"
@@ -77,9 +78,9 @@ export function ContactForm({
 
   if (status === "success") {
     return (
-      <p className="text-center text-indigo font-medium">
-        Thank you. We&apos;ll be in touch.
-      </p>
+      <FeedbackBanner variant="success" title="Thank you">
+        We&apos;ll be in touch shortly.
+      </FeedbackBanner>
     );
   }
 
@@ -136,7 +137,9 @@ export function ContactForm({
         required
         hint="Tell us a bit about how you'd like to get involved."
       />
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? (
+        <FeedbackBanner variant="error">{error}</FeedbackBanner>
+      ) : null}
       <Button
         type="submit"
         variant="primary"

@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
+import { PhotoFallback } from "@/components/ui/PhotoFallback";
 import { cn } from "@/lib/cn";
 import type { Event } from "@/types/db";
 
@@ -44,7 +45,7 @@ export function EventCard({ event, rsvpInfo, className }: EventCardProps) {
     <Card
       variant="default"
       className={cn(
-        "flex flex-col p-0 overflow-hidden transition-shadow hover:shadow-md",
+        "flex flex-col p-0 overflow-hidden lift-on-hover",
         className,
       )}
     >
@@ -58,11 +59,9 @@ export function EventCard({ event, rsvpInfo, className }: EventCardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-cream">
-            <span className="font-display text-3xl text-saffron/60">ॐ</span>
-          </div>
+          <PhotoFallback />
         )}
-        <div className="absolute top-3 left-3 flex flex-col items-center rounded-lg bg-white px-3 py-1.5 shadow-sm">
+        <div className="absolute top-3 left-3 flex flex-col items-center rounded-lg bg-white border border-gray-200 px-3 py-1.5">
           <span className="text-[10px] font-semibold tracking-widest text-saffron">
             {monthAbbrev}
           </span>

@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
+import { Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { BlogCard } from "@/components/cards/BlogCard";
 import { Markdown } from "@/components/ui/Markdown";
+import { ShareButtons } from "@/components/blog/ShareButtons";
 import { getBlogPostBySlug, listBlogPosts } from "@/lib/queries/blog";
 import { jsonLdString } from "@/lib/jsonLd";
 
@@ -38,6 +40,14 @@ export async function generateMetadata({
   };
 }
 
+function estimateReadTimeMinutes(markdown: string): number {
+  const words = markdown
+    .replace(/[#*_>`-]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.round(words / 220));
+}
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -48,6 +58,8 @@ export default async function BlogPostPage({
   const all = await listBlogPosts(8);
   const related = all.filter((p) => p.id !== post.id).slice(0, 3);
   const published = post.published_at ? new Date(post.published_at) : null;
+  const readTime = estimateReadTimeMinutes(post.body_md);
+  const shareUrl = `https://bhfcommunity.org/blog/${post.slug}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -75,7 +87,7 @@ export default async function BlogPostPage({
       />
 
       {post.hero_image_url ? (
-        <div className="relative aspect-[16/7] w-full bg-cream">
+        <div className="relative aspect-[16/9] w-full bg-cream">
           <Image
             src={post.hero_image_url}
             alt={post.title}
@@ -87,7 +99,7 @@ export default async function BlogPostPage({
         </div>
       ) : null}
 
-      <section className="bg-white py-12">
+      <section className="bg-white py-12 md:py-16">
         <Container>
           <Link
             href="/blog"
@@ -96,19 +108,36 @@ export default async function BlogPostPage({
             ← Back to all posts
           </Link>
 
-          <article className="mt-6 max-w-3xl mx-auto">
-            <h1 className="font-display text-4xl md:text-5xl text-indigo mb-4">
+          <article className="mt-6 max-w-2xl mx-auto">
+            <h1 className="font-display text-4xl md:text-5xl text-indigo mb-4 leading-tight">
               {post.title}
             </h1>
-            {published ? (
-              <p className="text-sm uppercase tracking-wider text-warm-gray mb-8">
-                {format(published, "MMMM d, yyyy")}
-              </p>
-            ) : null}
-            <p className="text-lg text-warm-gray leading-relaxed mb-8">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-warm-gray mb-8">
+              <span className="font-semibold text-indigo">
+                Bharatiya Heritage Foundation
+              </span>
+              {published ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{format(published, "MMMM d, yyyy")}</span>
+                </>
+              ) : null}
+              <span aria-hidden="true">·</span>
+              <span className="inline-flex items-center gap-1">
+                <Clock size={14} className="text-saffron" />
+                {readTime} min read
+              </span>
+            </div>
+            <p className="text-lg text-warm-gray leading-relaxed mb-8 italic">
               {post.excerpt}
             </p>
-            <Markdown content={post.body_md} />
+            <div className="drop-cap">
+              <Markdown content={post.body_md} />
+            </div>
+
+            <div className="mt-12 border-t border-gray-200 pt-8">
+              <ShareButtons url={shareUrl} title={post.title} />
+            </div>
           </article>
         </Container>
       </section>
@@ -116,7 +145,7 @@ export default async function BlogPostPage({
       {related.length > 0 ? (
         <section className="bg-cream py-16">
           <Container>
-            <h2 className="font-display text-2xl text-indigo mb-8">
+            <h2 className="font-display text-2xl md:text-3xl text-indigo mb-8">
               More from the blog
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Calendar, MapPin, Users, DollarSign, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Markdown } from "@/components/ui/Markdown";
-import { getProgramBySlug } from "@/lib/queries/programs";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { ProgramCard } from "@/components/cards/ProgramCard";
+import {
+  getProgramBySlug,
+  listPrograms,
+} from "@/lib/queries/programs";
 import { getSessionFromCookies } from "@/lib/auth";
 import { jsonLdString } from "@/lib/jsonLd";
 
@@ -56,6 +62,14 @@ export async function generateMetadata({
   };
 }
 
+function ageRange(min: number | null, max: number | null): string | null {
+  if (min === null && max === null) return null;
+  if (min !== null && max !== null) return `${min}–${max} yrs`;
+  if (min !== null) return `${min}+ yrs`;
+  if (max !== null) return `up to ${max} yrs`;
+  return null;
+}
+
 export default async function ProgramDetailPage({
   params,
 }: {
@@ -74,6 +88,13 @@ export default async function ProgramDetailPage({
   const ctaLabel = isYouth ? "Register interest" : "Get in touch";
   const registerHref = `/account/register-youth?programId=${program.id}`;
   const loginRegisterHref = `/login?next=${encodeURIComponent(registerHref)}`;
+
+  const allPrograms = await listPrograms();
+  const otherPrograms = allPrograms
+    .filter((p) => p.id !== program.id)
+    .slice(0, 3);
+
+  const ages = ageRange(program.min_age_years, program.max_age_years);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -94,6 +115,12 @@ export default async function ProgramDetailPage({
         dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }}
       />
 
+      <PageHeader
+        eyebrow="Program"
+        title={program.title}
+        description={program.short_description}
+      />
+
       <section className="bg-white py-12 md:py-16">
         <Container>
           {program.hero_image_url ? (
@@ -109,22 +136,15 @@ export default async function ProgramDetailPage({
             </div>
           ) : null}
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-6">
             <Badge variant="indigo">{categoryLabels[program.category]}</Badge>
             <Badge variant="saffron">
               {frequencyLabels[program.frequency]}
             </Badge>
           </div>
 
-          <h1 className="font-display text-4xl md:text-5xl text-indigo mb-4">
-            {program.title}
-          </h1>
-          <p className="text-lg text-warm-gray max-w-3xl leading-relaxed">
-            {program.short_description}
-          </p>
-
           {isYouthProgram ? (
-            <div className="mt-6 max-w-3xl rounded-xl border border-saffron/40 bg-cream p-5">
+            <div className="mb-10 max-w-3xl rounded-xl border border-saffron/40 bg-cream p-5">
               {isMember ? (
                 <>
                   <h2 className="font-display text-lg text-indigo">
@@ -165,11 +185,7 @@ export default async function ProgramDetailPage({
               )}
             </div>
           ) : null}
-        </Container>
-      </section>
 
-      <section className="bg-white pb-8">
-        <Container>
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
             <div className="max-w-3xl">
               {program.description_md ? (
@@ -206,7 +222,61 @@ export default async function ProgramDetailPage({
               ) : null}
             </div>
 
-            <aside className="lg:sticky lg:top-24 self-start">
+            <aside className="lg:sticky lg:top-24 self-start space-y-6">
+              {/* Quick facts */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6">
+                <h3 className="font-display text-lg text-indigo mb-4">
+                  Quick facts
+                </h3>
+                <dl className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <Calendar size={16} className="text-saffron mt-0.5 flex-shrink-0" />
+                    <div>
+                      <dt className="font-semibold text-indigo">Frequency</dt>
+                      <dd className="text-warm-gray">
+                        {frequencyLabels[program.frequency]}
+                      </dd>
+                    </div>
+                  </div>
+                  {ages ? (
+                    <div className="flex items-start gap-3">
+                      <Users size={16} className="text-saffron mt-0.5 flex-shrink-0" />
+                      <div>
+                        <dt className="font-semibold text-indigo">Age range</dt>
+                        <dd className="text-warm-gray">{ages}</dd>
+                      </div>
+                    </div>
+                  ) : null}
+                  {program.location ? (
+                    <div className="flex items-start gap-3">
+                      <MapPin size={16} className="text-saffron mt-0.5 flex-shrink-0" />
+                      <div>
+                        <dt className="font-semibold text-indigo">Location</dt>
+                        <dd className="text-warm-gray">{program.location}</dd>
+                      </div>
+                    </div>
+                  ) : null}
+                  {program.cost_md ? (
+                    <div className="flex items-start gap-3">
+                      <DollarSign size={16} className="text-saffron mt-0.5 flex-shrink-0" />
+                      <div>
+                        <dt className="font-semibold text-indigo">Cost</dt>
+                        <dd className="text-warm-gray">See cost details below</dd>
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="flex items-start gap-3">
+                    <Sparkles size={16} className="text-saffron mt-0.5 flex-shrink-0" />
+                    <div>
+                      <dt className="font-semibold text-indigo">Category</dt>
+                      <dd className="text-warm-gray">
+                        {categoryLabels[program.category]}
+                      </dd>
+                    </div>
+                  </div>
+                </dl>
+              </div>
+
               <div className="bg-cream border border-saffron/30 rounded-xl p-6">
                 <h3 className="font-display text-lg text-indigo mb-3">
                   Interested?
@@ -219,17 +289,26 @@ export default async function ProgramDetailPage({
                 <ButtonLink href={ctaHref} variant="primary" size="md">
                   {ctaLabel}
                 </ButtonLink>
-                {program.location ? (
-                  <p className="text-xs text-warm-gray mt-4">
-                    <span className="font-semibold text-indigo">Location: </span>
-                    {program.location}
-                  </p>
-                ) : null}
               </div>
             </aside>
           </div>
         </Container>
       </section>
+
+      {otherPrograms.length > 0 ? (
+        <section className="bg-cream py-16">
+          <Container>
+            <h2 className="font-display text-2xl md:text-3xl text-indigo mb-8">
+              Other programs you might like
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {otherPrograms.map((p) => (
+                <ProgramCard key={p.id} program={p} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
     </main>
   );
 }

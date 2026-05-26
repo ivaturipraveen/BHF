@@ -19,7 +19,7 @@ export async function ProgramsPreview() {
             href="/programs"
             className="text-saffron font-medium hover:text-amber-burnt whitespace-nowrap"
           >
-            All programs →
+            All programs <span className="read-more-arrow">→</span>
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

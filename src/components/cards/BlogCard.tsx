@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
+import { PhotoFallback } from "@/components/ui/PhotoFallback";
 import { cn } from "@/lib/cn";
 import type { BlogPost } from "@/types/db";
 
@@ -16,7 +17,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
     <Card
       variant="default"
       className={cn(
-        "flex flex-col p-0 overflow-hidden transition-shadow hover:shadow-md",
+        "flex flex-col p-0 overflow-hidden lift-on-hover",
         className,
       )}
     >
@@ -30,9 +31,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
             className="object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-display text-3xl text-saffron/40">ॐ</span>
-          </div>
+          <PhotoFallback />
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-6">
@@ -54,7 +53,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
             href={`/blog/${post.slug}`}
             className="text-saffron font-medium hover:text-amber-burnt"
           >
-            Read more →
+            Read more <span className="read-more-arrow">→</span>
           </Link>
         </div>
       </div>

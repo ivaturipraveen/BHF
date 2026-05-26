@@ -22,7 +22,7 @@ export async function UpcomingEvents() {
             href="/events"
             className="text-saffron font-medium hover:text-amber-burnt whitespace-nowrap"
           >
-            View full calendar →
+            View full calendar <span className="read-more-arrow">→</span>
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

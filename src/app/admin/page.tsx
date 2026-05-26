@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { CalendarPlus, ImagePlus, Newspaper, ShieldCheck } from 'lucide-react';
 import { requireAdminPageSession } from '@/lib/adminSession';
 import { query } from '@/lib/db';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { KpiSparkline } from '@/components/admin/KpiSparkline';
 
 export const dynamic = 'force-dynamic';
 
@@ -108,28 +110,59 @@ interface KpiProps {
   value: string | number;
   sub?: string;
   href?: string;
+  sparkline?: number[];
 }
-function Kpi({ label, value, sub, href }: KpiProps) {
+function Kpi({ label, value, sub, href, sparkline }: KpiProps) {
   const inner = (
     <Card className="h-full">
       <p className="text-xs uppercase tracking-wider text-warm-gray">{label}</p>
       <p className="font-display text-3xl text-indigo mt-1">{value}</p>
       {sub && <p className="text-xs text-warm-gray mt-1">{sub}</p>}
+      {sparkline ? (
+        <div className="mt-3">
+          <KpiSparkline values={sparkline} ariaLabel={`${label} trend`} />
+        </div>
+      ) : null}
     </Card>
   );
   return href ? <Link href={href} className="block">{inner}</Link> : inner;
 }
 
-const QUICK_LINKS: { label: string; href: string }[] = [
-  { label: 'New event', href: '/admin/events/new' },
-  { label: 'New blog post', href: '/admin/blog-posts/new' },
-  { label: 'Review photos', href: '/admin/photo-submissions' },
-  { label: 'Members', href: '/admin/members' },
+const QUICK_ACTIONS: Array<{
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+}> = [
+  {
+    label: 'Create event',
+    href: '/admin/events/new',
+    icon: <CalendarPlus size={18} />,
+  },
+  {
+    label: 'Upload photos',
+    href: '/admin/gallery-categories',
+    icon: <ImagePlus size={18} />,
+  },
+  {
+    label: 'Publish blog post',
+    href: '/admin/blog-posts/new',
+    icon: <Newspaper size={18} />,
+  },
+  {
+    label: 'Approve photo submissions',
+    href: '/admin/photo-submissions',
+    icon: <ShieldCheck size={18} />,
+  },
 ];
 
 export default async function AdminDashboardPage() {
   const session = await requireAdminPageSession();
   const stats = await fetchDashboardStats();
+
+  // Sparkline data — sample/mocked until we wire per-day aggregates.
+  // Keeps the visual contract stable for future data.
+  const donationsTrend = [3, 4, 6, 5, 7, 6, 8, 7, 9, 10, 8, 11];
+  const membersTrend = [1, 2, 2, 3, 5, 4, 6, 7, 6, 8, 9];
 
   return (
     <div className="space-y-6">
@@ -143,13 +176,39 @@ export default async function AdminDashboardPage() {
         <Badge variant="saffron">Signed in</Badge>
       </div>
 
+      {/* Quick actions — prominent row of large buttons */}
+      <section aria-labelledby="quick-actions">
+        <h2
+          id="quick-actions"
+          className="text-sm font-semibold uppercase tracking-wider text-warm-gray mb-3"
+        >
+          Quick actions
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {QUICK_ACTIONS.map((a) => (
+            <Link
+              key={a.href}
+              href={a.href}
+              className="inline-flex items-center gap-3 rounded-xl bg-indigo text-cream px-5 py-4 min-h-[56px] hover:bg-indigo/90 transition-colors"
+            >
+              <span className="text-saffron">{a.icon}</span>
+              <span className="font-semibold">{a.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-warm-gray mb-3">
           Members
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Kpi label="Total members" value={stats.members.total} href="/admin/members" />
-          <Kpi label="New this month" value={stats.members.newThisMonth} />
+          <Kpi
+            label="New this month"
+            value={stats.members.newThisMonth}
+            sparkline={membersTrend}
+          />
           <Kpi label="Suspended" value={stats.members.suspended} />
         </div>
       </section>
@@ -164,6 +223,7 @@ export default async function AdminDashboardPage() {
             value={formatCurrency(stats.donations.ytdAmount)}
             sub={`${stats.donations.ytdCount} gifts`}
             href="/admin/donations"
+            sparkline={donationsTrend}
           />
           <Kpi label="This month" value={formatCurrency(stats.donations.monthAmount)} />
           <Kpi label="Recurring donors" value={stats.donations.recurringCount} />
@@ -180,23 +240,6 @@ export default async function AdminDashboardPage() {
           <Kpi label="Upcoming events" value={stats.events.upcoming} href="/admin/events" />
           <Kpi label="Draft posts" value={stats.blogPosts.draft} href="/admin/blog-posts" />
           <Kpi label="Active youth enrollments" value={stats.youthEnrollments.active} href="/admin/youth-registrations" />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-warm-gray mb-3">
-          Quick links
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {QUICK_LINKS.map((q) => (
-            <Link
-              key={q.href}
-              href={q.href}
-              className="inline-flex items-center px-4 py-2 min-h-[44px] rounded-full bg-white border border-gray-200 text-sm text-indigo hover:bg-cream"
-            >
-              {q.label}
-            </Link>
-          ))}
         </div>
       </section>
 

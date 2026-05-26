@@ -50,7 +50,7 @@ export function Markdown({ content, className }: MarkdownProps) {
           ),
           a: ({ children, ...props }) => (
             <a
-              className="text-saffron underline hover:text-amber-burnt"
+              className="text-saffron underline decoration-saffron/40 decoration-2 underline-offset-4 hover:decoration-saffron hover:text-amber-burnt transition-all"
               {...props}
             >
               {children}

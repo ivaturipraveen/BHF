@@ -13,7 +13,7 @@ export const CSRF_MAX_AGE_SECONDS = ADMIN_MAX_AGE_SECONDS;
 export async function setSessionCookie(token: string): Promise<void> {
   cookies().set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.HTTPS_ENABLED === '1',
     sameSite: 'lax',
     path: '/',
     maxAge: SESSION_MAX_AGE_SECONDS,
@@ -27,7 +27,7 @@ export async function clearSessionCookie(): Promise<void> {
 export async function setAdminCookie(token: string): Promise<void> {
   cookies().set(ADMIN_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.HTTPS_ENABLED === '1',
     sameSite: 'strict',
     path: '/',
     maxAge: ADMIN_MAX_AGE_SECONDS,
@@ -42,7 +42,7 @@ export async function clearAdminCookie(): Promise<void> {
 export async function setCsrfCookie(token: string): Promise<void> {
   cookies().set(CSRF_COOKIE, token, {
     httpOnly: false,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.HTTPS_ENABLED === '1',
     sameSite: 'strict',
     path: '/',
     maxAge: CSRF_MAX_AGE_SECONDS,

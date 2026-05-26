@@ -1,20 +1,45 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { PHOTOS } from "@/lib/photos";
 
 export function StorySection() {
   return (
     <section className="bg-white py-20 md:py-24">
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-cream">
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-cream flex items-center justify-center">
+            {/* Madhubani-style corner motifs */}
+            <svg
+              aria-hidden="true"
+              role="presentation"
+              className="absolute top-4 left-4 w-20 h-20 text-saffron opacity-15"
+              viewBox="0 0 100 100"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="50" cy="50" r="40" />
+              <circle cx="50" cy="50" r="28" />
+              <path d="M50 10 L50 90 M10 50 L90 50 M22 22 L78 78 M78 22 L22 78" />
+            </svg>
+            <svg
+              aria-hidden="true"
+              role="presentation"
+              className="absolute bottom-4 right-4 w-20 h-20 text-indigo opacity-15"
+              viewBox="0 0 100 100"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path d="M20 20 L50 50 L80 20 M20 80 L50 50 L80 80" />
+              <circle cx="50" cy="50" r="6" fill="currentColor" />
+            </svg>
             <Image
-              src={PHOTOS.COMMUNITY[0]}
-              alt="BHF community gathering"
-              fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover"
+              src="/brand/bhf-logo.jpg"
+              alt="Bharatiya Heritage Foundation logo"
+              width={280}
+              height={280}
+              className="rounded-full relative z-10"
             />
           </div>
 

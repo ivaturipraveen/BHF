@@ -1,6 +1,4 @@
-import Image from "next/image";
 import { Container } from "@/components/ui/Container";
-import { PHOTOS } from "@/lib/photos";
 
 export function TestimonialBand() {
   return (
@@ -22,15 +20,11 @@ export function TestimonialBand() {
           </blockquote>
 
           <div className="mt-8 inline-flex items-center gap-3">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full bg-white">
-              <Image
-                src={PHOTOS.COMMUNITY[1]}
-                alt=""
-                aria-hidden="true"
-                fill
-                sizes="48px"
-                className="object-cover"
-              />
+            <div
+              aria-hidden="true"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-saffron/15 text-saffron font-display text-xl"
+            >
+              B
             </div>
             <p className="text-sm text-warm-gray">
               <span className="font-semibold text-indigo">A BHF family</span>{" "}

@@ -81,6 +81,14 @@ Use the table beneath each section as your checklist when you bring up a new env
 |---|---|---|---|
 | `TRUST_PROXY` | Set to `1` when running behind a load balancer or reverse proxy (e.g. Caddy, nginx, AWS ALB). Tells the app to trust `X-Forwarded-For` / `X-Forwarded-Proto` headers, which are needed for accurate client IPs in rate-limit and audit-log entries. Leave unset (or `0`) when the Node process is directly internet-facing. | Set based on your hosting topology. | `1` |
 
+## Hero background video
+
+The homepage Hero supports an optional looping background video. Detection is filesystem-based at request time, so the file simply needs to ship with the deployed app bundle.
+
+- Include `public/brand/hero.mp4` (and optionally `public/brand/hero.webm` and `public/brand/hero-poster.jpg`) in the production build artifact. Next.js serves everything under `public/` as static assets.
+- If the file is absent in production, the Hero falls back automatically to the photo (`PHOTOS.HERO`) or the brand cream + Madhubani motifs. No code change or redeploy is required to add or remove the video — but on read-only deployments (e.g., immutable container images), you will need a new image to land the asset.
+- See the Maintainer's Handbook section "Hero background video" for file specs and the fallback chain.
+
 ## Pre-launch checklist
 
 Before flipping DNS to production, walk this list once:

@@ -1,18 +1,37 @@
+import fs from "node:fs";
+import path from "node:path";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { PHOTOS } from "@/lib/photos";
+import HeroBackground from "@/components/HeroBackground";
+
+function heroVideoExists(): boolean {
+  try {
+    return fs.existsSync(path.join(process.cwd(), "public", "brand", "hero.mp4"));
+  } catch {
+    return false;
+  }
+}
 
 export default function Hero() {
+  const hasVideo = heroVideoExists();
   const heroPhoto = PHOTOS.HERO;
-  const hasPhoto = typeof heroPhoto === "string" && heroPhoto.length > 0;
+  const hasPhoto = !hasVideo && typeof heroPhoto === "string" && heroPhoto.length > 0;
+  const darkOverlay = hasVideo || hasPhoto;
 
   return (
     <section
       id="home"
       className="relative isolate min-h-[80vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-cream"
     >
-      {hasPhoto ? (
+      {hasVideo ? (
+        <div className="absolute inset-0 -z-10">
+          <HeroBackground />
+          {/* Solid indigo overlay for legibility (no gradient) */}
+          <div className="absolute inset-0 bg-indigo/60" aria-hidden="true" />
+        </div>
+      ) : hasPhoto ? (
         <div className="absolute inset-0 -z-10">
           <Image
             src={heroPhoto}
@@ -89,7 +108,7 @@ export default function Hero() {
 
         <h1
           className={
-            hasPhoto
+            darkOverlay
               ? "mt-4 font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-cream leading-[1.05] tracking-tight max-w-4xl mx-auto"
               : "mt-4 font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-indigo leading-[1.05] tracking-tight max-w-4xl mx-auto"
           }
@@ -99,7 +118,7 @@ export default function Hero() {
 
         <p
           className={
-            hasPhoto
+            darkOverlay
               ? "mt-6 text-lg md:text-xl text-cream/85 max-w-2xl mx-auto leading-relaxed"
               : "mt-6 text-lg md:text-xl text-warm-gray max-w-2xl mx-auto leading-relaxed"
           }
@@ -112,7 +131,7 @@ export default function Hero() {
           <ButtonLink href="/get-involved" variant="primary" size="lg">
             Become a member
           </ButtonLink>
-          {hasPhoto ? (
+          {darkOverlay ? (
             <ButtonLink
               href="/events"
               size="lg"
@@ -129,7 +148,7 @@ export default function Hero() {
 
         <p
           className={
-            hasPhoto
+            darkOverlay
               ? "mt-8 text-xs text-cream/70 tracking-wide"
               : "mt-8 text-xs text-warm-gray tracking-wide"
           }

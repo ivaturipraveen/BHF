@@ -105,6 +105,40 @@ When Phase 3 lands, this section will be replaced with a click-through guide und
 
 ---
 
+## Hero background video
+
+The homepage Hero supports an optional looping background video. When a video file is present in `public/brand/`, the Hero auto-detects it at request time and switches to video mode. Remove the file to revert to the photo or brand fallback — no rebuild required.
+
+### Where to upload
+
+Drop the file at:
+
+- `/home/ubuntu/app/public/brand/hero.mp4` — H.264 MP4, required.
+- `/home/ubuntu/app/public/brand/hero.webm` — VP9/AV1 WebM, optional. Modern browsers prefer it (smaller file), and they fall back to the MP4 automatically.
+- `/home/ubuntu/app/public/brand/hero-poster.jpg` — optional static poster frame shown while the video loads and used when a visitor has `prefers-reduced-motion` enabled.
+
+### Recommended specs
+
+- Codec: H.264 (baseline or main profile) for `.mp4`; VP9 for `.webm`.
+- Resolution: 1920×1080 or 2400×1350.
+- Frame rate: 25–30 fps.
+- Length: 8–15 seconds, loop-friendly (the last frame should match the first).
+- File size: 5–10 MB max — the page should still load fast on mobile.
+- No audio — the video is muted on the page.
+- The video sits beneath an indigo overlay, so contrasty footage with movement reads best. Avoid white-on-white scenes.
+
+### How the fallback chain works
+
+The Hero picks the first available option, in order:
+
+1. **Video** — if `public/brand/hero.mp4` exists, the Hero renders a `<video>` element.
+2. **Photo** — if no video file is present and `PHOTOS.HERO` is set in `src/lib/photos.ts`, the Hero renders that photo.
+3. **Brand fallback** — if neither is present, the Hero renders the cream background with Madhubani corner motifs.
+
+To roll back from video to photo or brand, simply delete `public/brand/hero.mp4`. The next page request will detect the change and re-render without the `<video>` element.
+
+---
+
 ## 8. Update homepage featured content
 
 1. Go to **Homepage config** in the sidebar.

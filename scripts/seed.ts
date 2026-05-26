@@ -32,12 +32,12 @@ const PH: {
   vedic: string;
   hero: string | null;
   community: string;
-  portrait1: string;
-  portrait2: string;
-  portrait3: string;
-  portrait4: string;
-  portrait5: string;
-  portrait6: string;
+  portrait1: string | null;
+  portrait2: string | null;
+  portrait3: string | null;
+  portrait4: string | null;
+  portrait5: string | null;
+  portrait6: string | null;
 } = {
   // Festival of lights — broken Unsplash ID, fall back to brand placeholder
   diwali: null,
@@ -63,13 +63,16 @@ const PH: {
   hero: null,
   // Generic community / gathering / family
   community: u('photo-1531058020387-3be344556be6'),
-  // Portraits (leadership) — kept; warm natural light, professional but human
-  portrait1: u('photo-1507003211169-0a1dd7228f2d', 600),
-  portrait2: u('photo-1494790108377-be9c29b29330', 600),
-  portrait3: u('photo-1500648767791-00dcc994a43e', 600),
-  portrait4: u('photo-1573496359142-b8d87734a5a2', 600),
-  portrait5: u('photo-1472099645785-5658abf4ff4e', 600),
-  portrait6: u('photo-1438761681033-6461ffad8d80', 600),
+  // Portraits (leadership) — stock portraits don't represent Bharatiya
+  // heritage leaders. Per PRD §3.1, real BHF leadership portraits replace
+  // these via /admin/leadership. Until then, LeadershipCard renders a
+  // saffron initials avatar.
+  portrait1: null,
+  portrait2: null,
+  portrait3: null,
+  portrait4: null,
+  portrait5: null,
+  portrait6: null,
 };
 
 interface EventSeed {
@@ -611,7 +614,7 @@ const pages: PageSeed[] = [
   {
     slug: 'about-hero',
     title: 'What is BHF?',
-    body_md: `BHF — Bharatiyatha Heritage Foundation — is a nonprofit community in Fairfield, California dedicated to celebrating, practicing, and passing on the timeless values of Indian heritage.
+    body_md: `BHF — Bharatiya Heritage Foundation — is a nonprofit community in Fairfield, California dedicated to celebrating, practicing, and passing on the timeless values of Indian heritage.
 
 We host festivals that fill the fairgrounds with light and color. We run youth programs that put real responsibility in young hands. We organize charity drives that serve our unhoused neighbors. And we hold monthly classes — yoga, meditation, Vedic chanting — that keep ancient practices alive in modern lives.
 
@@ -660,9 +663,9 @@ The result is a community where the next generation of leaders is being formed i
   {
     slug: 'press-boilerplate',
     title: 'About BHF',
-    body_md: `**About Bharatiyatha Heritage Foundation (BHF)**
+    body_md: `**About Bharatiya Heritage Foundation (BHF)**
 
-Bharatiyatha Heritage Foundation (BHF) is a nonprofit organization based in Fairfield, California, dedicated to celebrating and passing on the timeless values of Indian heritage — known collectively as Bharatiyatha. Founded in 2018, BHF serves the greater Solano County community through cultural festivals, youth empowerment programs, wellness classes, and seva initiatives.
+Bharatiya Heritage Foundation (BHF) is a nonprofit organization based in Fairfield, California, dedicated to celebrating and passing on the timeless values of Indian heritage — known collectively as Bharatiyatha. Founded in 2018, BHF serves the greater Solano County community through cultural festivals, youth empowerment programs, wellness classes, and seva initiatives.
 
 BHF's signature events include the annual Diwali Festival of Lights, the Holi Festival of Colors, the Kite Festival, and the Warm Hearts Charity Drive. Year-round programming includes Vedic chanting circles, yoga and meditation classes, monthly community hikes, and four youth-led Student Boards covering Operations, Creative Arts, Leadership, and Mentorship.
 
@@ -690,7 +693,7 @@ BHF is a 501(c)(3) nonprofit organization. All donations are tax-deductible to t
     title: 'Privacy Policy',
     body_md: `**Last updated:** May 2026
 
-Bharatiyatha Heritage Foundation ("BHF", "we", "us") respects your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have.
+Bharatiya Heritage Foundation ("BHF", "we", "us") respects your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have.
 
 ## Information We Collect
 
@@ -764,7 +767,7 @@ For questions about this Privacy Policy, email privacy@bhfcommunity.org.`,
     title: 'Terms of Service',
     body_md: `**Last updated:** May 2026
 
-These Terms of Service ("Terms") govern your use of the Bharatiyatha Heritage Foundation ("BHF") website and services. By using our website or participating in our programs, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of the Bharatiya Heritage Foundation ("BHF") website and services. By using our website or participating in our programs, you agree to these Terms.
 
 ## 1. Acceptable Use
 

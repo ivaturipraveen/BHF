@@ -3,15 +3,20 @@ export const siteConfig = {
   shortName: "BHF",
   tagline: "Preserving Traditions | Strengthening Community | Celebrating Culture",
   email: "support@bhfcommunity.org",
+  phone: "(707) 555-0142",
+  address: "Fairfield, CA",
+  donateHref: "/donate",
   copyright: `© ${new Date().getFullYear()} Bharatiya Heritage Foundation. All Rights Reserved.`,
 };
 
 export const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Values", href: "#values" },
-  { label: "Events", href: "#events" },
-  { label: "Get Involved", href: "#get-involved" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Programs", href: "/programs" },
+  { label: "Events", href: "/events" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Get Involved", href: "/get-involved" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export const vision = {

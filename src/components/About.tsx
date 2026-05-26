@@ -5,7 +5,9 @@ import {
   HeartHandshake,
   HandHelping,
 } from "lucide-react";
-import { vision, missionItems } from "../data/content";
+import { vision, missionItems } from "@/data/content";
+import { Container } from "@/components/ui/Container";
+import { Section } from "@/components/ui/Section";
 
 const iconMap = {
   users: Users,
@@ -17,27 +19,25 @@ const iconMap = {
 
 export default function About() {
   return (
-    <section id="about" className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Vision */}
+    <Section id="about" className="bg-white">
+      <Container>
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="inline-block px-4 py-1.5 text-sm font-semibold text-saffron-700 bg-saffron-50 rounded-full border border-saffron-200 mb-4">
+          <span className="inline-block px-4 py-1.5 text-sm font-semibold text-saffron bg-cream rounded-full mb-4">
             Who We Are
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-indigo">
             {vision.title}
           </h2>
-          <p className="mt-6 text-lg text-gray-600 leading-relaxed">
+          <p className="mt-6 text-lg text-warm-gray leading-relaxed">
             {vision.description}
           </p>
         </div>
 
-        {/* Mission */}
         <div className="text-center mb-12">
-          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">
+          <h3 className="font-display text-2xl sm:text-3xl font-semibold text-indigo">
             Our Mission
           </h3>
-          <p className="mt-3 text-gray-500">
+          <p className="mt-3 text-warm-gray">
             BHF is committed to building a stronger Bharatiya community
           </p>
         </div>
@@ -48,22 +48,22 @@ export default function About() {
             return (
               <div
                 key={idx}
-                className="group relative p-8 bg-gradient-to-br from-white to-saffron-50/50 rounded-2xl border border-saffron-100 hover:border-saffron-300 hover:shadow-xl transition-all duration-300"
+                className="group p-8 bg-cream/40 rounded-2xl border border-cream hover:border-saffron/40 transition-colors duration-300"
               >
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-saffron-400 to-saffron-600 flex items-center justify-center text-white mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 rounded-xl bg-saffron flex items-center justify-center text-white mb-5">
                   <Icon size={26} />
                 </div>
-                <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                <h4 className="font-display text-xl font-semibold text-indigo mb-3">
                   {item.title}
                 </h4>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-warm-gray leading-relaxed">
                   {item.description}
                 </p>
               </div>
             );
           })}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

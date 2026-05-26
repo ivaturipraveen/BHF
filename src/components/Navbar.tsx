@@ -1,74 +1,55 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { navLinks, siteConfig } from "../data/content";
+import Link from "next/link";
+import { navLinks, siteConfig } from "@/data/content";
+import { Container } from "@/components/ui/Container";
+import { ButtonLink } from "@/components/ui/Button";
+import { SessionChip, MobileSessionLinks } from "@/components/SessionChip";
+import { NavbarMobileMenu } from "@/components/NavbarMobileMenu";
+import { DesktopNavLinks, MobileNavLinks } from "@/components/NavLinks";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-saffron-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          <a href="#home" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-saffron-500 to-saffron-700 flex items-center justify-center text-white font-bold text-sm tracking-wide shadow-md">
-              BHF
-            </div>
-            <span className="hidden sm:block font-serif text-lg font-semibold text-gray-900 group-hover:text-saffron-700 transition-colors">
-              {siteConfig.name}
-            </span>
-          </a>
-
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:text-saffron-700 hover:bg-saffron-50 transition-all"
-              >
-                {link.label}
-              </a>
-            ))}
-            <a
-              href="#get-involved"
-              className="ml-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-saffron-500 to-saffron-600 rounded-full hover:from-saffron-600 hover:to-saffron-700 transition-all shadow-md hover:shadow-lg"
-            >
-              Join Us
-            </a>
-          </div>
-
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-700 hover:text-saffron-600 rounded-lg"
-            aria-label="Toggle menu"
+    <nav
+      role="navigation"
+      aria-label="Main"
+      className="sticky top-0 z-40 backdrop-blur bg-white/95 border-b border-gray-200"
+    >
+      <Container>
+        <div className="relative flex h-20 items-center justify-between">
+          <Link
+            href="/"
+            className="font-display text-xl text-indigo hover:text-saffron transition-colors"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
+            BHF • Bharatiya Heritage Foundation
+          </Link>
 
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-saffron-100 shadow-lg">
-          <div className="px-4 py-3 space-y-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:text-saffron-700 hover:bg-saffron-50 transition-all"
-              >
-                {link.label}
-              </a>
-            ))}
-            <a
-              href="#get-involved"
-              onClick={() => setIsOpen(false)}
-              className="block mt-2 px-4 py-3 text-center text-base font-semibold text-white bg-gradient-to-r from-saffron-500 to-saffron-600 rounded-full"
-            >
-              Join Us
-            </a>
+          <div className="hidden lg:flex items-center gap-1">
+            <DesktopNavLinks links={navLinks} />
           </div>
+
+          <div className="hidden lg:flex items-center gap-3">
+            <ButtonLink href={siteConfig.donateHref} variant="primary" size="sm">
+              Donate
+            </ButtonLink>
+            <SessionChip />
+          </div>
+
+          <NavbarMobileMenu>
+            <div className="py-3 flex flex-col gap-1">
+              <MobileNavLinks links={navLinks} />
+              <div className="flex flex-col gap-2 mt-2">
+                <ButtonLink
+                  href={siteConfig.donateHref}
+                  variant="primary"
+                  size="md"
+                >
+                  Donate
+                </ButtonLink>
+                <MobileSessionLinks />
+              </div>
+            </div>
+          </NavbarMobileMenu>
         </div>
-      )}
+      </Container>
     </nav>
   );
 }

@@ -7,10 +7,28 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build artifacts
+.next/
+out/
 dist
 dist-ssr
+*.tsbuildinfo
+next-env.d.ts
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
 *.local
+
+# User-uploaded content (admin-managed; not source)
+/public/uploads/
+
+# Orchestrator / system files (not application source)
+CLAUDE.md
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +40,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test / coverage
+coverage/
+.vitest-cache/

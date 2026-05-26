@@ -1,0 +1,164 @@
+import Link from "next/link";
+import { format } from "date-fns";
+import { redirect } from "next/navigation";
+import { getSessionFromCookies } from "@/lib/auth";
+import { listMyDonations } from "@/lib/queries/account";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import type { Donation } from "@/types/db";
+
+export const dynamic = "force-dynamic";
+
+function formatCents(cents: number): string {
+  return `$${(cents / 100).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+function statusVariant(status: string): "saffron" | "indigo" | "amber" | "gray" {
+  switch (status) {
+    case "succeeded":
+      return "indigo";
+    case "pending":
+      return "amber";
+    case "failed":
+    case "refunded":
+    case "canceled":
+      return "gray";
+    default:
+      return "gray";
+  }
+}
+
+function ytdSum(donations: Donation[]): number {
+  const year = new Date().getUTCFullYear();
+  return donations
+    .filter(
+      (d) =>
+        d.status === "succeeded" &&
+        new Date(d.created_at).getUTCFullYear() === year,
+    )
+    .reduce((sum, d) => sum + d.amount_cents, 0);
+}
+
+export default async function DonationsPage() {
+  const session = await getSessionFromCookies();
+  if (!session) redirect("/login?next=/account/donations");
+
+  const donations = await listMyDonations(session.sub);
+  const ytd = ytdSum(donations);
+
+  return (
+    <div className="flex flex-col gap-6">
+      <header>
+        <h1 className="font-display text-3xl text-indigo">Donation history</h1>
+        <p className="mt-2 text-warm-gray">
+          Your contributions to BHF. Tax-deductible to the extent allowed by
+          law.
+        </p>
+      </header>
+
+      {donations.length === 0 ? (
+        <Card>
+          <p className="text-warm-gray">
+            Your donation history will appear here once you donate. Visit{" "}
+            <Link
+              href="/donate"
+              className="text-saffron hover:text-amber-burnt font-medium"
+            >
+              /donate
+            </Link>{" "}
+            to make your first contribution.
+          </p>
+        </Card>
+      ) : (
+        <Card className="overflow-x-auto p-0">
+          <table className="w-full text-sm">
+            <thead className="bg-cream text-indigo">
+              <tr>
+                <th className="text-left px-4 py-3 font-medium">Date</th>
+                <th className="text-left px-4 py-3 font-medium">Amount</th>
+                <th className="text-left px-4 py-3 font-medium">Type</th>
+                <th className="text-left px-4 py-3 font-medium">Status</th>
+                <th className="text-left px-4 py-3 font-medium">Receipt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {donations.map((d) => (
+                <tr key={d.id} className="border-t border-gray-200">
+                  <td className="px-4 py-3 text-warm-gray">
+                    {format(new Date(d.created_at), "MMM d, yyyy")}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-indigo">
+                    {formatCents(d.amount_cents)}
+                  </td>
+                  <td className="px-4 py-3 text-warm-gray capitalize">
+                    {d.type.replace("_", " ")}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={statusVariant(d.status)}>{d.status}</Badge>
+                  </td>
+                  <td className="px-4 py-3">
+                    {d.receipt_url ? (
+                      <a
+                        href={d.receipt_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-saffron hover:text-amber-burnt font-medium"
+                      >
+                        View
+                      </a>
+                    ) : d.status === "succeeded" ? (
+                      <Link
+                        href={`/donate/thank-you?id=${d.id}`}
+                        className="text-saffron hover:text-amber-burnt font-medium"
+                      >
+                        View
+                      </Link>
+                    ) : (
+                      <span className="text-warm-gray/60">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      )}
+
+      <Card>
+        <h2 className="font-display text-xl text-indigo">Year-end summary</h2>
+        <p className="mt-2 text-warm-gray">
+          Total donated in {new Date().getUTCFullYear()}:{" "}
+          <span className="font-semibold text-indigo">{formatCents(ytd)}</span>
+        </p>
+        <p className="mt-3 text-sm text-warm-gray">
+          <span
+            className="text-saffron font-medium"
+            title="Coming in Phase 3"
+            aria-disabled="true"
+          >
+            Download annual statement
+          </span>{" "}
+          (coming soon)
+        </p>
+      </Card>
+
+      <Card className="bg-cream border-amber-300">
+        <p className="text-sm text-warm-gray">
+          <span className="font-medium text-indigo">Heads up:</span> Recurring
+          donation management is coming soon. To change a recurring gift today,
+          please contact{" "}
+          <a
+            href="mailto:support@bhfcommunity.org"
+            className="text-saffron hover:text-amber-burnt font-medium"
+          >
+            support@bhfcommunity.org
+          </a>
+          .
+        </p>
+      </Card>
+    </div>
+  );
+}
